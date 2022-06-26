@@ -1,3 +1,4 @@
+// https://codeforces.com/problemset/problem/1675/E
 #include <bits/stdc++.h>
 using namespace std;
 int fastio() { ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0; } int __fastio = fastio();
@@ -26,7 +27,40 @@ typedef vector<ll>                          vll;
 
 
 void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
+	ll N , K ; cin >> N >> K;
+	string str; cin >> str;
+
+	char mx = 'a';
+	pair<char, char> range;
+
+	for (int i = 0; i < N; i++) {
+		if (str[i] <= mx) {
+			str[i] = 'a';
+		}
+		else {
+			ll diff = str[i] - mx;
+			if (K >= diff) {
+				mx = max(mx, str[i]);
+				str[i] = 'a';
+				K -= diff;
+			}
+			else if (K > 0) {
+				range = {str[i] - K, str[i]};
+				str[i] -= K;
+				K = 0;
+				break;
+			}
+		}
+	}
+
+	// dbg(range);
+	for (int i = 0; i < N; i++) {
+		if (str[i] >= range.first and str[i] <= range.second) {
+			str[i] = range.first;
+		}
+		if (str[i] <= mx) str[i] = 'a';
+	}
+	cout << str << endl;
 }
 
 int main() {
@@ -35,5 +69,4 @@ int main() {
 	while (tt--) {
 		solve();
 	}
-
 }

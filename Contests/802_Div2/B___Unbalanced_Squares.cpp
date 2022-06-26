@@ -1,8 +1,12 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+B - Unbalanced Squares
+AtCoder - AtCoder Regular Contest 142
+https://atcoder.jp/contests/arc142/tasks/arc142_b
+Memory Limit : 1024
+Time Limit : 2000
+
+Sun Jun 19 2022 18:42:34 GMT+0530 (India Standard Time)
+Started At: 6:42:34 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -30,53 +34,80 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
+vvl arr;
 
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
-
-	cats = is_cat[node] ? cats + 1 : 0;
-
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
+void go_left(int &x, int &y, int &val) {
+	int N = arr.size();
+	int step = +1;
+	for (int i = y; i < N; i += step) {
+		if (arr[x][i] != 0) return;
+		y = i;
+		arr[x][i] = val++;
 	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
+}
+void go_right(int &x, int &y, int &val) {
+	int N = arr.size();
+	int step = -1;
+	for (int i = y; i < N; i += step) {
+		if (arr[x][i] != 0) return;
+		y = i;
+		arr[x][i] = val++;
+	}
+}
+void go_down(int &x, int &y, int &val) {
+	int N = arr.size();
+	int step = +1;
+	for (int i = x; i < N; i += step) {
+		if (arr[i][y] != 0) return;
+		x = i;
+		arr[i][y] = val++;
+	}
+}
+void go_up(int &x, int &y, int &val) {
+	int N = arr.size();
+	int step = -1;
+	for (int i = x; i < N; i += step) {
+		if (arr[i][y] != 0) return;
+		x = i;
+		arr[i][y] = val++;
+	}
+}
+
+ll get_zeros() {
+	ll z = 0;
+	for (int i = 0; i < arr.size(); i++) {
+		for (int j = 0; j < arr.size(); j++) {
+			z += (arr[i][j] == 0);
+		}
+	}
+	return z;
+}
+
+void fill_spiral(ll N) {
+	int val = 1, i = 0, j = 0;
+	while (get_zeros() != 0) {
+		go_left(i, j, val); i++;
+		go_down(i, j, val); j--;
+		go_right(i, j, val); i--;;
+		go_up(i, j, val); j++;
+	}
 }
 
 
 void solve() {
+	ll N; cin >> N;
 
-	cin >> N >> M;
-
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
-
-
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
+	arr.assign(N, vll(N, 0));
+	fill_spiral(N);
+	for (auto a : arr) {
+		for (auto b : a) {
+			cout << b << " ";
+		}
+		cout << endl;
 	}
-
-	dfs(0, 0);
-	cout << ans << endl;
 }
-
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}

@@ -1,3 +1,5 @@
+// https://codeforces.com/contest/707/problem/C
+
 #include <bits/stdc++.h>
 using namespace std;
 int fastio() { ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0; } int __fastio = fastio();
@@ -24,14 +26,29 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
+// because for any n > 2 can find m and k such that n ^ 2 + m ^ 2 = k ^ 2
 
 void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
-}
+	ll A; cin >> A;
+	if (A <= 2) {
+		cout << - 1 << endl;
+		return;
+	}
 
+	ll B = -1, C = -1;
+	if (A % 2) {
+		B = (A * A + 1) / 2 , C = (A * A - 1) / 2;
+	}
+	else {
+		B = A * A / 4 + 1, C = B - 2;
+	}
+	if (B > 0 and C > 0) cout << B << " " << C << endl;
+	else cout << -1 << endl;
+
+}
 int main() {
 	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}

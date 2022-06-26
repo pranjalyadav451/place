@@ -24,16 +24,43 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
+bool ans = false;
 
-void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
-}
 
-int main() {
-	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
-	while (tt--) {
-		solve();
+bool calc(ll total, ll pos, vll &arr) {
+	if (pos == arr.size() - 1) {
+		return (total  - arr[pos] == 23)
+		       || (total + arr[pos] == 23)
+		       || (total * arr[pos] == 23);
 	}
 
+	bool res = calc(total + arr[pos], pos + 1, arr)
+	           || calc(total - arr[pos], pos + 1, arr)
+	           || calc(total * arr[pos], pos + 1, arr);
+	return res;
+}
+
+void perm(int i, vll &arr) {
+	if (i == arr.size()) {
+		ans |= calc(arr[0], 1, arr);
+	}
+	for (int j = i; j < arr.size(); j++) {
+		swap(arr[i], arr[j]);
+		perm( i + 1, arr);
+		swap(arr[i], arr[j]);
+	}
+}
+
+
+
+int main() {
+	ll a = 0, b = 0, c = 0, d = 0, e = 0;
+	while (cin >> a >> b >> c >> d >> e) {
+		vll arr = {a, b, c, d , e};
+		if (count(all(arr), 0) == 5) return 0;
+
+		ans = false;
+		perm(0, arr);
+		cout << (ans ? "Possible" : "Impossible") << endl;
+	}
 }

@@ -1,3 +1,4 @@
+// https://codeforces.com/contest/1678/problem/B1
 #include <bits/stdc++.h>
 using namespace std;
 int fastio() { ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0; } int __fastio = fastio();
@@ -26,9 +27,25 @@ typedef vector<ll>                          vll;
 
 
 void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
-}
+	ll N; cin >> N;
+	string str; cin >> str;
 
+	ll podd = 0;
+	ll ans = 0;
+
+	for (int i = 0; i < N;) {
+		char curr = str[i];
+		ll cnt = 0;
+		while (i < N and str[i] == curr) {
+			cnt++; i++;
+		}
+		cnt += podd;
+		podd = (cnt % 2 == 1);
+		ans += podd;
+	}
+	cout << ans << endl;
+
+}
 int main() {
 	int tt = 1;
 	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"

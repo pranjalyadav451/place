@@ -1,8 +1,12 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+C. Sum of Substrings
+Codeforces - CodeCraft-22 and Codeforces Round #795 (Div. 2)
+https://codeforces.com/problemset/problem/1691/C
+Memory Limit : 256
+Time Limit : 1000
+
+Wed Jun 22 2022 10:48:49 GMT+0530 (India Standard Time)
+Started At: 10:48:49 AM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -30,54 +34,47 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
 
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
+void reduced(string &str, ll K) {
+    ll last = str.find_last_of('1'), N = str.size();
+    if (last == string::npos) return;
 
-	cats = is_cat[node] ? cats + 1 : 0;
+    if (N - last - 1 <= K) {
+        swap(str[last], str[N - 1]);
+        K -= N - last - 1;
+    }
 
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
-	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
+    ll first = str.find_first_of('1');
+    if (first != N - 1 and first <= K) {
+        swap(str[first], str[0]);
+    }
 }
 
+// Take care of corner cases.
+// Dry run the solution when you are not sure of it thoroughly.
+// Better to be late than to be wrong.
+// Try to run it on testcases other than the samples on which you think it might fail.
+// Never use int - Lost too much
+// Always use pen and paper for doing the dry run of the test cases.
 
 void solve() {
+    ll N , K;
+    string str;
+    cin >> N >> K >> str;
 
-	cin >> N >> M;
-
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
-
-
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
-	}
-
-	dfs(0, 0);
-	cout << ans << endl;
+    reduced(str, K);
+    ll ans = 0;
+    for (int i = 0; i < N; i++) {
+        ans += ((ll)(i > 0) + (ll)(i < N - 1) * 10) * (str[i] == '1');
+    }
+    cout << ans << endl;
 }
 
 int main() {
-	int tt = 1;
-	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
-	while (tt--) {
-		solve();
-	}
+    int tt = 1;
+    cin >> tt;
+    while (tt--) {
+        solve();
+    }
 }
+

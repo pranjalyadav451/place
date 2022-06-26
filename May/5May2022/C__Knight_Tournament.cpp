@@ -31,14 +31,33 @@ typedef vector<ll>                          vll;
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
 
-void solve() {
-
-}
 int main() {
-	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
-	while (tt--) {
-		solve();
+	ll N , M;
+	cin >> N >> M;
+
+	set<ll>alive;
+	for (int i = 1; i <= N; i++) alive.insert(i);
+	vector<int> res(N + 1);
+
+
+	for (int i = 0; i < M; i++) {
+		ll L , R , X;
+		cin >> L >> R >> X;
+		auto it = alive.lower_bound(L);
+		while ((*it) <= R and it != alive.end()) {
+			res[*it] = X;
+			/*
+			alive.erase(it);
+			it++;
+			*/
+			alive.erase(it++);
+		}
+		alive.insert(X);
+		res[X] = 0;
 	}
 
+	for (int i = 1; i <= N; i++) cout << res[i] << " ";
+
+
 }
+

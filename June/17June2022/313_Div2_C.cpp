@@ -25,15 +25,20 @@ typedef vector<ll>                          vll;
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
 
-void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
+ll sq(ll a) {
+	return a * a;
 }
 
+void solve() {
+	ll a , b , c , d , e , f;
+	cin >> a >> b >> c >> d >> e >> f;
+
+	ll ans = sq(a + b + c) - sq(a) - sq(c) - sq(e);
+	cout << ans << endl;
+}
 int main() {
 	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}
-
 }

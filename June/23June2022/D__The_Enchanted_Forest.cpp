@@ -1,8 +1,12 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+D. The Enchanted Forest
+Codeforces - Codeforces Round #796 (Div. 2)
+https://codeforces.com/problemset/problem/1688/D
+Memory Limit : 256
+Time Limit : 2000
+
+Thu Jun 23 2022 12:49:34 GMT+0530 (India Standard Time)
+Started At: 12:49:34 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -30,54 +34,40 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
-
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
-
-	cats = is_cat[node] ? cats + 1 : 0;
-
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
-	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
-}
-
 
 void solve() {
-
-	cin >> N >> M;
-
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
-
-
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
+	ll n , k;
+	cin >> n >> k;
+	vll arr(n);
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i];
 	}
 
-	dfs(0, 0);
+	vll pref(n + 1);
+	for (int i = 1; i <= n; i++) {
+		pref[i] = pref[i - 1] + arr[i - 1];
+	}
+
+	ll ans = 0;
+	if (k >= n) {
+		ans = pref[n] + n * k - (n * (n + 1)) / 2;
+	}
+	else {
+		ll mx = pref[k];
+		for (int i = k + 1; i <= n; i++) {
+			mx = max(mx, pref[i] - pref[i - k]);
+		}
+		ans = mx + ((k - 1) * (k)) / 2LL;
+	}
 	cout << ans << endl;
 }
 
+
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}
+
 }

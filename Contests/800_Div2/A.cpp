@@ -26,14 +26,25 @@ typedef vector<ll>                          vll;
 
 
 void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
+	ll A , B; cin >> A >> B;
+	ll len = A + B;
+
+	for (int i = 0; i < len; i++) {
+		if ((i % 2 == 0 and A > 0) or B == 0) {
+			cout << '0';
+			A--;
+		}
+		else if ((i % 2 == 1 and B > 0) or A == 0) {
+			cout << '1'; B--;
+		}
+	}
+	cout << endl;
 }
 
 int main() {
 	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	cin >> tt;
 	while (tt--) {
 		solve();
 	}
-
 }

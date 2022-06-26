@@ -1,8 +1,11 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+name: C. Column Swapping
+group: Codeforces - Codeforces Round #792 (Div. 1 + Div. 2)
+url: https://codeforces.com/problemset/problem/1684/C
+interactive: false
+memoryLimit: 256
+timeLimit: 1000
+Started At: 2:41:43 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -30,54 +33,58 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
+pll check(vvl &A, vvl &C, int n, int m) {
 
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
+	set<pll> anomalies;
+	pll cant = pair(-1, -1), trivial = pair(1, 1);
 
-	cats = is_cat[node] ? cats + 1 : 0;
-
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
+	for (int i = 0; i < n; i++) {
+		if (C[i].size() == 0) continue;
+		if (C[i].size() != 2) return cant;
+		anomalies.insert(pair(C[i][0], C[i][1]));
 	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
+
+	if (anomalies.size() != 1) return  (anomalies.size() == 0) ? trivial : cant;
+	pll anomaly = *anomalies.begin();
+
+	for (int i = 0; i < n; i++) {
+		if (C[i].size() == 0) {
+			if (A[i][anomaly.first] != A[i][anomaly.second]) return cant;
+		}
+	}
+	return pair(anomaly.first + 1, anomaly.second + 1);
 }
 
 
 void solve() {
+	ll n , m; cin >> n >> m;
+	vvl A(n, vll(m));
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++)
+			cin >> A[i][j];
+	}
+	vvl B = A;
+	for (int i = 0; i < n; i++) sort(all(B[i]));
 
-	cin >> N >> M;
+	vvl C(n);
 
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
-
-
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (A[i][j] != B[i][j]) {
+				C[i].push_back(j);
+			}
+		}
 	}
 
-	dfs(0, 0);
-	cout << ans << endl;
+	pll is = check(A, C, n, m);
+	if (is != pair(-1LL, -1LL)) cout << is.first << " " << is.second << endl;
+	else cout << -1 << endl;
 }
-
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}
+
 }

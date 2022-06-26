@@ -1,9 +1,14 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+C. Banknotes
+Codeforces - Educational Codeforces Round 116 (Rated for Div. 2)
+https://codeforces.com/problemset/problem/1606/C
+Memory Limit : 256
+Time Limit : 2000
+
+Sun Jun 19 2022 13:57:58 GMT+0530 (India Standard Time)
+Started At: 1:57:58 PM
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 int fastio() { ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0; } int __fastio = fastio();
@@ -30,53 +35,17 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
-
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
-
-	cats = is_cat[node] ? cats + 1 : 0;
-
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
-	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
-}
-
 
 void solve() {
-
-	cin >> N >> M;
-
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
+	ll N , K; cin >> N >> K;
+	vll arr(N);
+	for (int i = 0; i < N; i++) cin >> arr[i];
 
 
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
-	}
-
-	dfs(0, 0);
-	cout << ans << endl;
 }
-
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}

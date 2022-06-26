@@ -1,8 +1,11 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+name: C. Fishingprince Plays With Array
+group: Codeforces - Codeforces Global Round 21
+url: https://codeforces.com/contest/1696/problem/C
+interactive: false
+memoryLimit: 512
+timeLimit: 2000
+Started At: 8:44:29 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -30,54 +33,57 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
 
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
 
-	cats = is_cat[node] ? cats + 1 : 0;
+template<typename T> void read_array(ll n, vector<T> &arr) {arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i]; }
+vpl process(vll &A, ll m) {
+	vpl C, D;
+	ll n = A.size();
+	for (int i = 0; i < n; i++) {
+		ll t = A[i];
+		ll freq = 0;
+		while (t % m == 0) {
+			t /= m;
+			freq++;
+		}
 
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
+		C.push_back(make_pair(t, A[i] / t));
 	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
+
+	for (int i = 0; i < C.size();) {
+		ll ele = C[i].first , freq = 0;
+		while (i < n and C[i].first == ele) {
+			freq += C[i].second;
+			i++;
+		}
+		D.push_back(make_pair(ele, freq));
+	}
+	return D;
 }
 
 
 void solve() {
+	ll n , m , k; cin >> n >> m;
+	vll A, B;
+	read_array(n, A);
+	cin >> k;
+	read_array(k, B);
 
-	cin >> N >> M;
+	ll total_A = accumulate(all(A), 0) , total_B = accumulate(all(B), 0);
 
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
-
-
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
+	if (total_B != total_A) {
+		cout << "NO" << endl; return;
 	}
-
-	dfs(0, 0);
-	cout << ans << endl;
+	vpl D = process(A, m);
+	vpl E = process(B, m);
+	bool is = (D == E);
+	cout << (is ? "yes" : "no") << endl;
 }
-
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	cin >> tt;
 	while (tt--) {
 		solve();
 	}
+
 }

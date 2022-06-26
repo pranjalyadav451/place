@@ -1,8 +1,12 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+A - Reverse and Minimize
+AtCoder - AtCoder Regular Contest 142
+https://atcoder.jp/contests/arc142/tasks/arc142_a
+Memory Limit : 1024
+Time Limit : 2000
+
+Sun Jun 19 2022 17:41:15 GMT+0530 (India Standard Time)
+Started At: 5:41:15 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -30,50 +34,38 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
 
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
-
-	cats = is_cat[node] ? cats + 1 : 0;
-
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
-	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
+ll rev(ll N) {
+	string str = to_string(N);
+	reverse(all(str));
+	N = stol(str);
+	return N;
 }
 
 
 void solve() {
+	ll N , K;
+	cin >> N >> K;
+	ll ans = 0;
 
-	cin >> N >> M;
-
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
+	set<ll> allow;
 
 
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
+
+	for (ll t = 1; min(K * t, rev(K)*t) <= N; t *= 10) {
+		ll one = K * t, two = rev(K) * t;
+		allow.insert(one);
+		allow.insert(two);
 	}
-
-	dfs(0, 0);
+	for (auto a : allow) {
+		if (a <= N) {
+			ll t = min({a, rev(a), rev(rev(a))});
+			ans += (t == K);
+		}
+	}
 	cout << ans << endl;
-}
 
+}
 int main() {
 	int tt = 1;
 	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"

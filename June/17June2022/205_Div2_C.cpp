@@ -26,12 +26,35 @@ typedef vector<ll>                          vll;
 
 
 void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
-}
+	ll N; cin >> N;
+	vll arr(N);
+	for (int i = 0; i < N; i++) {
+		cin >> arr[i];
+	}
+	reverse(all(arr));
+	string mstr; cin >> mstr;
+	vll suff(N + 1);
+	suff[N] = 0;
+	suff[N - 1] = arr[N - 1];
+	for (int i = N - 2; i >= 0; i--) {
+		suff[i] = suff[i + 1] + arr[i];
+	}
+	reverse(all(mstr));
 
+	ll ans  = 0, mx = 0, temp = 0;
+	for (int i = 0; i < N; i++) {
+		if (mstr[i] == '0') continue;
+		ll without = temp + suff[i + 1];
+		mx = max(mx, without);
+		temp += arr[i];
+	}
+	mx = max(mx , temp);
+	cout << mx << endl;
+
+}
 int main() {
 	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}

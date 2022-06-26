@@ -1,3 +1,4 @@
+// https://codeforces.com/contest/424/problem/C
 #include <bits/stdc++.h>
 using namespace std;
 int fastio() { ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0; } int __fastio = fastio();
@@ -24,16 +25,42 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-
-void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
+vll xor_table;
+void fill_xor(ll N) {
+	xor_table.assign(N + 1, 0);
+	xor_table[0] = xor_table[1] = 0, xor_table[2] = 1;
+	for (int i = 3; i <= N; i++) {
+		xor_table[i] = xor_table[i - 1] ^ (i - 1);
+	}
 }
 
+void solve() {
+	ll N; cin >> N;
+	vll arr(N);
+
+	fill_xor(N);
+
+	ll part1 = 0, part2 = 0;
+
+	for (int i = 0; i < N; i++) {
+		cin >> arr[i];
+		part1 ^= arr[i];
+	}
+
+	for (int j = 2; j <= N; j++) {
+		ll q = N / j , rem = N % j;
+		part2  = (q % 2 == 0) ? part2 : (part2 ^ xor_table[j]);
+		part2 = part2 ^ xor_table[rem + 1];
+	}
+
+	ll ans = part2 ^ part1;
+	cout << ans << endl;
+
+}
 int main() {
 	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}
-
 }

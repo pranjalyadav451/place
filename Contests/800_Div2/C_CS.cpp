@@ -26,9 +26,39 @@ typedef vector<ll>                          vll;
 
 
 void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
-}
+	ll N; cin >> N;
+	vll arr(N);
+	for (int i = 0; i < N; i++) {
+		cin >> arr[i];
+	}
 
+
+	ll bi  = 0, bii = 0, sum = 0;
+	bool ans = true;
+
+
+
+	for (int i = 0; i < N; i++) {
+		sum += arr[i];
+		bii = arr[i] + bi;
+
+		if (bii < 0) {
+			ans = false; break;
+		}
+		if (bii == 0) {
+			ll cnt = count(arr.begin() + i + 1, arr.end(), 0);
+			if (cnt != N - i  - 1) {
+				ans = false;
+			}
+			break;
+		}
+		bi = bii;
+	}
+
+	ans = ans && (sum == 0);
+	cout << (ans ? "YES" : "NO") << endl;
+
+}
 int main() {
 	int tt = 1;
 	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"

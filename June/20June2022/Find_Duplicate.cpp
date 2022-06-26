@@ -24,16 +24,30 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
+int findDuplicate(vector<int>& arr) {
 
-void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
+	int len = arr.size();
+	int fast = arr[len - 1] , slow = arr[len - 1];
+	do {
+		slow = arr[slow - 1];
+		fast = arr[arr[fast - 1] - 1];
+	}
+	while (slow != fast);
+	fast = arr[len - 1];
+	while (slow != fast) {
+		slow = arr[slow - 1];
+		fast = arr[fast - 1];
+	}
+	return slow;
 }
 
 int main() {
 	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
-		solve();
+		int N; cin >> N;
+		vector<int> arr(N);
+		for (int i = 0; i < N; i++) cin >> arr[i];
+		int ans = findDuplicate(arr);
+		dbg(ans);
 	}
-
 }

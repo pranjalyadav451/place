@@ -1,3 +1,5 @@
+// https://codeforces.com/problemset/problem/1692/G
+
 #include <bits/stdc++.h>
 using namespace std;
 int fastio() { ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0; } int __fastio = fastio();
@@ -26,7 +28,26 @@ typedef vector<ll>                          vll;
 
 
 void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
+	ll n , k; cin >> n >> k;
+	vll arr(n);
+	for (int i = 0; i < n; i++)
+		cin >> arr[i];
+
+	ll prev = arr[0], cnt = 1, ans = 0;
+
+	for (int i = 1; i < n; i++) {
+		ll curr = arr[i];
+		if (curr * 2  > prev) {
+			cnt++;
+		}
+		else {
+			cnt = 1;
+		}
+		if (cnt >= k + 1) ans++;
+		prev = curr;
+	}
+	cout << ans << endl;
+
 }
 
 int main() {
@@ -35,5 +56,4 @@ int main() {
 	while (tt--) {
 		solve();
 	}
-
 }

@@ -1,8 +1,11 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+name: F. Longest Strike
+group: Codeforces - Codeforces Round #790 (Div. 4)
+url: https://codeforces.com/problemset/problem/1676/F
+interactive: false
+memoryLimit: 256
+timeLimit: 1000
+Started At: 2:41:46 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -30,53 +33,54 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
-
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
-
-	cats = is_cat[node] ? cats + 1 : 0;
-
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
-	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
-}
-
 
 void solve() {
-
-	cin >> N >> M;
-
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
-
-
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
+	ll n , k;
+	cin >> n >> k;
+	vll arr(n);
+	map<ll, ll> cnt;
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i];
+		cnt[arr[i]]++;
 	}
+	sort(all(arr));
 
-	dfs(0, 0);
-	cout << ans << endl;
+
+	ll len = 0 , L = -1 , R = -1, mx = 0, prev = -1;
+
+	for (int i = 0; i < n;) {
+		if (cnt[arr[i]] >= k) {
+			if (len == 0 or arr[i] - prev == 1) {
+				len++;
+			}
+			else {
+				len = 1;
+			}
+			if (len > mx) {
+				L = arr[i] - (len - 1);
+				R = arr[i];
+				mx = len;
+			}
+			prev = arr[i];
+		}
+		else {
+			len = 0;
+		}
+		ll t = arr[i];
+		while (i < n and t == arr[i]) i++;
+	}
+	if (mx == 0) {
+		cout << - 1 << endl;
+		return;
+	}
+	cout << L << " " << R << endl;
+
 }
+
 
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}

@@ -1,8 +1,12 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+B. Jzzhu and Sequences
+Codeforces - Codeforces Round #257 (Div. 2)
+https://codeforces.com/contest/450/problem/B
+Memory Limit : 256
+Time Limit : 1000
+
+Wed Jun 22 2022 10:13:54 GMT+0530 (India Standard Time)
+Started At: 10:13:54 AM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -30,54 +34,23 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
-
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
-
-	cats = is_cat[node] ? cats + 1 : 0;
-
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
-	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
-}
-
+const ll mod = 1e9 + 7;
 
 void solve() {
+	ll x, y, n; cin >> x >> y >> n;
 
-	cin >> N >> M;
-
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
-
-
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
+	vll candi(6);
+	candi[0] = x, candi[1] = y;
+	for (int i = 2; i < candi.size(); i++) {
+		candi[i] = candi[i - 1] - candi[i - 2];
 	}
-
-	dfs(0, 0);
+	ll ans = (candi[(n - 1) % (ll)candi.size()] % mod + mod) % mod;
 	cout << ans << endl;
 }
-
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}
+
 }

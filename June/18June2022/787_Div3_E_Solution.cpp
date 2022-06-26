@@ -23,17 +23,52 @@ typedef vector<ll>                          vll;
 #define RREP(i, a, b)                       for (int i = (a); i >= (b); (i)--)
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
+template <class T> bool ckmax(T &a, T b) {return a < b ? a = b, true : false;}
 
 
 void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
+    int n, k; cin >> n >> k;
+    string s; cin >> s;
+
+    char mn = 'a';
+    for (int i = 0; i < n; i++) {
+        if (s[i] > mn) {
+
+            dbgg(i, s[i]);
+            dbgg(mn, k);
+            cout << endl;
+
+            if (s[i] - 'a' > k) {
+                k -= mn - 'a';
+                int to = s[i] - k;
+
+                for (char c = s[i]; c > to; c--) {
+                    for (char &e : s) {
+                        if (e == c) {
+                            e = char(c - 1);
+                        }
+                    }
+                }
+                break;
+            }
+            else
+                ckmax(mn, s[i]);
+        }
+    }
+
+    for (char &e : s) {
+        if (e <= mn) {
+            e = 'a';
+        }
+    }
+    cout << s << endl;
 }
 
 int main() {
-	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
-	while (tt--) {
-		solve();
-	}
+    int t;
+    cin >> t;
 
+    while (t--) {
+        solve();
+    }
 }

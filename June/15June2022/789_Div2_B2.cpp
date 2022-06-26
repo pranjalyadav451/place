@@ -24,16 +24,39 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
+const int N = 2e5 + 7;
+const int INF = 1e9;
+int c[N];
+pll dp[N][2];
 
 void solve() {
-	// how about if I fix a number and then find two numbers with the given sum
+	ll n; cin >> n;
+	string s; cin >> s;
+
+	for (int i = 1; i <= n; i++)
+		s[i] -= '0';
+	for (int i = 1; i <= n / 2; i++)
+		c[i] = s[i * 2] + s[i * 2 - 1] * 2;
+
+	for (int i = 1; i <= n / 2; i++)
+		for (int j = 0; j < 2; j++)
+			dp[i][j] = {INF, INF};
+
+
+	for (int i = 1; i <= n / 2; i++)
+		for (int j = 0; j < 2; j++) {
+			int cc = c[i], dd = j ? 3 : 0, cnt = ((dd % 2) ^ (cc % 2)) + ((dd / 2) ^ (cc / 2));
+			for (int k = 0; k < 2; k++)
+				dp[i][j] = min(dp[i][j], {dp[i - 1][k].first + cnt, dp[i - 1][k].second + (j != k)});
+		}
+
+	pll ans = min(dp[n / 2][0], dp[n / 2][1]);
+	cout << ans.first << " " << ans.second + 1 << "\n";
 }
 
 int main() {
-	int tt = 1;
-	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	int tt; cin >> tt;
 	while (tt--) {
 		solve();
 	}
-
 }

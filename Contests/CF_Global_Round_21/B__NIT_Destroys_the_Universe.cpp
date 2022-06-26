@@ -1,8 +1,11 @@
 /*
-https://codeforces.com/contest/580/problem/C
-Time Limit: 2000
-Memory Limit: 256
-Thu May 05 2022 11:34:36 GMT+0530 (India Standard Time)
+name: B. NIT Destroys the Universe
+group: Codeforces - Codeforces Global Round 21
+url: https://codeforces.com/contest/1696/problem/B
+interactive: false
+memoryLimit: 512
+timeLimit: 2000
+Started At: 8:17:38 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -30,54 +33,29 @@ typedef vector<ll>                          vll;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-vector<int> is_cat;
-vector<bool> visited;
-vector<vector<int>> graph;
-ll N , M;
-ll ans = 0;
-
-void dfs(int node, int cats) {
-	if (visited[node]) return;
-	visited[node] = true;
-
-	cats = is_cat[node] ? cats + 1 : 0;
-
-	if (cats > M) return;
-	for (auto a : graph[node]) {
-		dfs(a, cats);
-	}
-	// just hadn't put node!=0 check
-	if (node != 0 and graph[node].size() == 1) ans++;
-}
-
 
 void solve() {
-
-	cin >> N >> M;
-
-	is_cat.assign(N, 0);
-	graph.assign(N, vector<int>());
-	visited.assign(N, 0);
-
-	for (auto &a : is_cat) cin >> a;
-
-
-	ll X , Y;
-	for (int i = 0; i < N - 1; i++) {
-		cin >> X >> Y;
-		X--; Y--;
-		graph[X].push_back(Y);
-		graph[Y].push_back(X);
+	ll n; cin >> n;
+	vll arr(n);
+	for (int i = 0; i < n; i++) {
+		cin >> arr[i];
 	}
 
-	dfs(0, 0);
+	ll ans = 0;
+	for (int i = 0; i < n; i++) {
+		if (arr[i] != 0) {
+			ans++;
+			while (i < n and arr[i] != 0) i++;
+		}
+	}
+	if (ans > 1 ) ans = 2;
 	cout << ans << endl;
 }
-
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
+	cin >> tt; // "UN-COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}
+
 }
