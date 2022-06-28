@@ -8,10 +8,12 @@ timeLimit: 2000
 Started At: 12:03:56 PM
 */
 #include <bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
 using namespace std;
-using namespace __gnu_pbds;
+
+// #include <ext/pb_ds/assoc_container.hpp>
+// #include <ext/pb_ds/tree_policy.hpp>
+// using namespace __gnu_pbds;
+// typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> oset;
 
 int fastio() {
 	ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0;
@@ -44,7 +46,7 @@ typedef vector<vector<ll>>                  vvl;
 typedef vector<pll>                         vpl;
 typedef pair<int, int>                      pii;
 typedef long double                         ld;
-typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> oset;
+
 
 
 
@@ -63,11 +65,12 @@ template<typename... Args> void read(Args&... args) {
 }
 
 vector<string >process(string &str) {
-	vector<string> res; for (int i = 0; i < str.size(); i++) {
-		string temp = ""; while (i < str.size() and str[i] != ',') {
-			temp.push_back(str[i++]);
-		} res.push_back(temp); i++;
-	} return res;
+	vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
+		if (str[i] == ',') {
+			res.push_back(temp); temp = ""; i++;
+		}
+		else temp.push_back(str[i]);
+	} res.push_back(temp); return res;
 }
 template<typename ...Args> void logger(string vars, Args&&... values) {
 	string delim = ""; stringstream ss; (..., (ss << delim << values, delim = ", ")); delim = ""; string arrow = " : ", str_values = ss.str(); auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
@@ -77,10 +80,9 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define log_all(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-
 void solve() {
-	int a = 3, b = 4;
-	string c = "here";	log_all(a, b, c);
+	int a, b, c;
+	log_all(a, b, c);
 }
 int main() {
 	int tt = 1;
