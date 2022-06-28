@@ -10,14 +10,28 @@ Started At: 10:48:49 AM
 */
 #include <bits/stdc++.h>
 using namespace std;
-int fastio() { ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0; } int __fastio = fastio();
-template<typename A, typename B>    ostream& operator<<(ostream &os, const pair<A, B> &p);
-template<typename A>                ostream& operator<<(ostream &os, const set<A> &m) { os << "{"; string sep = ""; for (auto e : m) os << sep << e, sep = ", "; return os << "}"; }
-template<typename A>                ostream& operator<<(ostream &os, const multiset<A> &m) { os << "{"; string sep = ""; for (auto e : m) os << sep << e, sep = ", "; return os << "}"; }
-template<typename A, typename B>    ostream& operator<<(ostream &os, const map<A, B> &m) { os << "{"; string sep = ""; for (auto e : m) os << sep << e.first << ": " << e.second, sep = ", "; return os << "}"; }
-template<typename T>                ostream& operator<<(ostream& os, const vector<T>& v) { os << "["; string sep = ""; for (auto e : v) os << sep << e, sep = ", "; return os << "]"; }
-template<typename T, size_t L>      ostream& operator<<(ostream& os, const array<T, L>& v) { os << "["; string sep = ""; for (int i = 0; i < L; ++i) os << sep << v[i], sep = ", "; return os << "]"; }
-template<typename A, typename B>    ostream& operator<<(ostream &os, const pair<A, B> &p) { os << '(' << p.first << ", " << p.second << ')'; return os; }
+int fastio() {
+    ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0;
+} int __fastio = fastio();
+template<typename A, typename B>    ostream &operator<<(ostream &os, const pair<A, B> &p);
+template<typename A>                ostream &operator<<(ostream &os, const set<A> &m) {
+    os << "{"; string sep = ""; for (auto e : m) os << sep << e, sep = ", "; return os << "}";
+}
+template<typename A>                ostream &operator<<(ostream &os, const multiset<A> &m) {
+    os << "{"; string sep = ""; for (auto e : m) os << sep << e, sep = ", "; return os << "}";
+}
+template<typename A, typename B>    ostream &operator<<(ostream &os, const map<A, B> &m) {
+    os << "{"; string sep = ""; for (auto e : m) os << sep << e.first << ": " << e.second, sep = ", "; return os << "}";
+}
+template<typename T>                ostream &operator<<(ostream &os, const vector<T> &v) {
+    os << "["; string sep = ""; for (auto e : v) os << sep << e, sep = ", "; return os << "]";
+}
+template<typename T, size_t L>      ostream &operator<<(ostream &os, const array<T, L> &v) {
+    os << "["; string sep = ""; for (int i = 0; i < L; ++i) os << sep << v[i], sep = ", "; return os << "]";
+}
+template<typename A, typename B>    ostream &operator<<(ostream &os, const pair<A, B> &p) {
+    os << '(' << p.first << ", " << p.second << ')'; return os;
+}
 
 
 typedef long long                           ll;
@@ -58,7 +72,7 @@ void reduced(string &str, ll K) {
 // Always use pen and paper for doing the dry run of the test cases.
 
 void solve() {
-    ll N , K;
+    ll N, K;
     string str;
     cin >> N >> K >> str;
 
