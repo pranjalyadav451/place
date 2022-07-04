@@ -7,7 +7,7 @@ using namespace std;
 // typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> oset;
 
 int fastio() {
-	ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0;
+    ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0;
 } int __fastio = fastio();
 template<typename A, typename B>    ostream &operator<<(ostream &os, const pair<A, B> &p);
 template<typename A>                ostream &operator<<(ostream &os, const set<A> &m) {os << "{"; string sep = ""; for (auto e : m) os << sep << e, sep = ", "; return os << "}"; }
@@ -18,53 +18,7 @@ template<typename T, size_t L>      ostream &operator<<(ostream &os, const array
 template<typename A, typename B>    ostream &operator<<(ostream &os, const pair<A, B> &p) {os << '(' << p.first << ", " << p.second << ')'; return os; }
 
 
-typedef long long                           ll;
-typedef vector<ll>                          vll;
-typedef pair<ll, ll>                        pll;
-typedef vector<vector<ll>>                  vvl;
-typedef vector<pll>                         vpl;
-typedef pair<int, int>                      pii;
-typedef long double                         ld;
-
-
-
-
-#define all(x)                              (x).begin(),(x).end()
-#define REP(i, a, b)                        for (int i = (a); i <= (b); (i)++)
-#define RREP(i, a, b)                       for (int i = (a); i >= (b); (i)--)
-#define dbg(x)                              cout << #x << ": " << x << endl
-#define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
-
-template <long long MOD = 1000000007>
-class Modular {
-public:
-	long long value;
-	static const long long MOD_value = MOD;
-
-	Modular(long long v = 0) { value = v % MOD; if (value < 0) value += MOD;}
-	Modular(long long a, long long b) : value(0) { *this += a; *this /= b;}
-
-	Modular& operator+=(Modular const& b) {value += b.value; if (value >= MOD) value -= MOD; return *this;}
-	Modular& operator-=(Modular const& b) {value -= b.value; if (value < 0) value += MOD; return *this;}
-	Modular& operator*=(Modular const& b) {value = (long long)value * b.value % MOD; return *this;}
-
-	friend Modular mexp(Modular a, long long e) {
-		Modular res = 1LL; while (e) { if (e & 1LL) res *= a; a *= a; e >>= 1LL; }
-		return res;
-	}
-	friend Modular inverse(Modular a) { return mexp(a, MOD - 2LL); }
-
-	Modular& operator/=(Modular const& b) { return *this *= inverse(b); }
-	friend Modular operator+(Modular a, Modular const b) { return a += b; }
-	friend Modular operator-(Modular a, Modular const b) { return a -= b; }
-	friend Modular operator-(Modular const a) { return 0LL - a; }
-	friend Modular operator*(Modular a, Modular const b) { return a *= b; }
-	friend Modular operator/(Modular a, Modular const b) { return a /= b; }
-	friend std::ostream& operator<<(std::ostream& os, Modular const& a) {return os << a.value;}
-	friend bool operator==(Modular const& a, Modular const& b) {return a.value == b.value;}
-	friend bool operator!=(Modular const& a, Modular const& b) {return a.value != b.value;}
-};
-
+typedef long long ll;
 
 template<typename T> void read_array(ll n, vector<T> &arr) {arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i]; }
 template<typename... Args> void read(Args&... args) {((cin >> args), ...); }
@@ -74,12 +28,125 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
+struct LRUCache {
+    void set(int, int);
+    int get(int);
+    LRUCache(int);
+};
+
+struct DLL {
+    int val = -1;
+    DLL *prev = NULL , *next = NULL;
+};
+
+
+
+int MAX_SIZE = 0;
+DLL *First = NULL, *Last = NULL;
+
+map<int, int> mp;
+map<int, DLL*> node;
+
+void createAndInsertBetween(int key) {
+    DLL *t = new DLL();
+    DLL *one = First, *three = First->next;
+    one->next = t;
+    t->prev = one;
+
+    three->prev = t;
+    t-> next = three;
+
+    t->val = key;
+    node[key] = t;
+    return;
 }
+void removeAndInsert(int key) {
+    DLL *t = node[key];
+    DLL *one = t->prev , *three = t->next;
+
+    one->next = three;
+    three->prev = one;
+
+    one = First, three = First->next;
+
+    one->next = t;
+    three->prev = t;
+
+    t->prev = one;
+    t-> next = three;
+
+    t->val = key;
+    node[key] = t;
+    return;
+}
+void removeLast() {
+    DLL *rem = Last->prev;
+    DLL *one = rem->prev , *three = rem->next;
+
+    one->next = three;
+    three->prev = one;
+
+    mp.erase(rem->val);
+    node.erase(rem->val);
+    return;
+}
+
+
+LRUCache::LRUCache(int capacity) {
+    MAX_SIZE = capacity;
+    mp.clear();
+    node.clear();
+
+    First = new DLL() , Last = new DLL();
+
+    First->val = -1, First->prev = NULL, First->next = Last;
+    Last->val = - 1, Last->next = NULL, Last->prev = First;
+}
+
+int LRUCache::get(int key) {
+    if (mp.find(key) == mp.end()) {
+        return -1;
+    }
+    removeAndInsert(key);
+    return mp[key];
+}
+
+void LRUCache::set(int key, int value) {
+    if (mp.size() == MAX_SIZE and mp.count(key) == 0) {
+        removeLast();
+    }
+    if (mp.count(key) == 0) {
+        createAndInsertBetween(key);
+    }
+    else {
+        removeAndInsert(key);
+    }
+
+    mp[key] = value;
+}
+
+
 int main() {
-	int tt = 1;
-	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
-	while (tt--) {
-		solve();
-	}
+    int tt = 1;
+    // cin >> tt;
+    while (tt--) {
+        int ops , cap;
+        cin >> ops >> cap;
+
+        LRUCache cache = LRUCache(cap);
+
+        while (ops--) {
+            char c ; int a, b;
+            cin >> c;
+            if (c == 'G') {
+                cin >> a;
+                int val = cache.get(a);
+                cout << val << " ";
+            }
+            if (c == 'S') {
+                cin >> a >> b;
+                cache.set(a, b);
+            }
+        }
+    }
 }

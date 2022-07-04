@@ -73,8 +73,69 @@ vector<string >process(string &str) {vector<string> res; string temp = ""; for (
 template<typename ...Args> void logger(string vars, Args&&... values) {string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {cout << delim << labels[i] << arrow << content[i]; delim = ", "; } cout << " ]" << endl; }
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
+typedef unordered_map<char, int> umint;
+
+bool is(umint &sm, umint &tm) {
+	for (auto t : tm) {
+		if (sm.count(t.first) and sm[t.first] >= t.second) continue;
+		else return false;
+	}
+	return true;
+}
+string minWindow(string S, string T) {
+
+	unordered_map<char, int> sm , tm;
+	for (auto t : T) tm[t]++;
+
+	int start = 0 , end = 0;
+	int len = 1e9;
+	string ret;
+
+	while (end < S.size() and start <= end) {
+		if (not is(sm, tm)) {
+			sm[S[end]]++;
+			end++;
+		}
+		else {
+			if (len > end - start) {
+				string temp;
+				for (int i = start; i < end; i++) {
+					temp.push_back(S[i]);
+				}
+				ret = temp;
+			}
+			len = min(len, end - start);
+
+			sm[S[start]]--;
+			if (sm[S[start]] == 0) sm.erase(S[start]);
+
+			start++;
+		}
+	}
+	// log(len);
+
+	while (start < end and is(sm, tm)) {
+		if (len > end - start) {
+			string temp;
+			for (int i = start; i < end; i++) {
+				temp.push_back(S[i]);
+			}
+			ret = temp;
+		}
+		len = min(len, end - start);
+		sm[S[start]]--;
+		if (sm[S[start]] == 0) sm.erase(S[start]);
+		start++;
+	}
+
+	return ret;
+}
+
 
 void solve() {
+	string A , B; read(A, B);
+	string window = minWindow(A, B);
+	log(window);
 }
 int main() {
 	int tt = 1;

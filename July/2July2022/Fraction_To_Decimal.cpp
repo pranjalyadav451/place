@@ -74,12 +74,72 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
+string get_dec(long long n , long long d) {
+
+	map<int, int> mp;
+	string dec;
+	long long q = 0;
+
+	mp[n] = dec.size();
+
+	log(n);
+
+	while (n != 0) {
+		n *= 10;
+
+		q = n / d;
+		n = n % d;
+		dec.push_back(q + '0');
+
+		if (mp.count(n)) break;
+		mp[n] = dec.size();
+	}
+
+
+	int repeat_start = 1e9;
+	if (n != 0)
+		repeat_start = mp[n];
+
+	string ret;
+	for (int i = 0; i < dec.size(); i++) {
+		if (repeat_start == i) ret.push_back('(');
+		ret.push_back(dec[i]);
+	}
+	if (n != 0)
+		ret.push_back(')');
+	return ret;
 }
+
+
+string fractionToDecimal(int num, int den) {
+	long long n = num , d = den;
+	if (n < 0 and d < 0) {
+		n = abs(n); d = abs(d);
+	}
+
+	bool neg = (n < 0) or (d < 0);
+	n = abs(n) , d = abs(d);
+
+	long long q = n / d , rem = abs(n) % abs(d);
+	string res = to_string(q);
+
+	if (rem) {
+		string dec = get_dec(rem, d);
+		res += "." + dec;
+	}
+	if (neg and res != "0") res = "-" + res;
+
+	return res;
+}
+
+
+
 int main() {
 	int tt = 1;
 	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
 	while (tt--) {
-		solve();
+		int a, b; read(a, b);
+		string ans  = fractionToDecimal(a, b);
+		log(ans);
 	}
 }

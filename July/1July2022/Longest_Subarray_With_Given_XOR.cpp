@@ -73,8 +73,29 @@ vector<string >process(string &str) {vector<string> res; string temp = ""; for (
 template<typename ...Args> void logger(string vars, Args&&... values) {string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {cout << delim << labels[i] << arrow << content[i]; delim = ", "; } cout << " ]" << endl; }
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
+int get_xor(vector<int> &arr, int b) {
+	int n = arr.size(), ans = 0;
+
+	vector<int> pref(n + 1); pref[0] = b;
+	for (int i = 1; i <= n; i++) {
+		pref[i] = pref[i - 1] ^ arr[i - 1];
+	}
+	map<int, int> cnt;
+	for (int i = 1; i <= n; i++) {
+		ans += cnt[pref[i] ^ b];
+		if (pref[i] == 0) ans++;
+		cnt[pref[i]]++;
+	}
+
+	return ans;
+}
 
 void solve() {
+	int n, b; read(n);
+	vector<int> arr; read_array(n, arr);
+	read(b);
+	int cnt = get_xor(arr, b);
+	log(cnt);
 }
 int main() {
 	int tt = 1;

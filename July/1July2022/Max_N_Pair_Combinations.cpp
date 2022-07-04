@@ -74,12 +74,92 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
+vector<int> solve(vector<int> &A, vector<int> &B) {
+	int n = A.size();
+
+	map<int, int, greater<int>> fa , fb;
+	for (auto a : A) fa[a]++;
+	for (auto b : B) fb[b]++;
+
+
+	for (auto a : fa) {
+		log(a);
+	}
+	for (auto b : fb) {
+		log(b);
+	}
+
+
+
+	vector<int> res;
+	priority_queue<pair<int, int>> maxH;
+
+	auto it1 = fa.begin(), it2 = fb.begin();
+	int sum = it1->first + it2->first , cnt = it1->second * it2->second;
+	maxH.push({sum, cnt});
+
+	for (it1++, it2++; it1 != fa.end() and it2 != fb.end(); it1++, it2++) {
+		auto [bigA, cntBigA] = *fa.begin();
+		auto [bigB, cntBigB] = *fb.begin();
+
+		auto currA = *it1 , currB = *it2;
+		int sum = 0 , cnt = 0;
+
+		cnt = cntBigB * currA.second;
+		sum = bigB + currA.first;
+		maxH.push({sum, cnt});
+
+
+		cnt = cntBigA * currB.second;
+		sum = bigA + currB.first;
+		maxH.push({sum, cnt});
+	}
+
+	while (it1 != fa.end()) {
+		auto [bigB, cntBigB] = *fb.begin();
+		auto currA = *it1;
+		int sum = 0 , cnt = 0;
+		cnt = cntBigB * currA.second;
+		sum = bigB + currA.first;
+		maxH.push({sum, cnt});
+		it1++;
+	}
+	while (it2 != fb.end()) {
+		auto [bigA, cntBigA] = *fa.begin();
+		auto currB = *it2;
+		int sum = 0 , cnt = 0;
+		cnt = cntBigA * currB.second;
+		sum = bigA + currB.first;
+		maxH.push({sum, cnt});
+		it2++;
+	}
+
+	auto cop = maxH;
+	while (cop.size()) {
+		cout << cop.top() << " ";
+		cop.pop();
+	}
+	cout << endl;
+
+	while (maxH.size()) {
+		pair<int, int> top = maxH.top();
+		while (res.size() < n and top.second--) {
+			res.push_back(top.first);
+		}
+		maxH.pop();
+	}
+	return res;
 }
+
+
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
 	while (tt--) {
-		solve();
+		int n , m; vector<int> A , B;
+		read(n); read_array(n, A);
+		read(m); read_array(m, B);
+
+		auto res = solve(A, B);
+		cout << res << endl;
 	}
 }

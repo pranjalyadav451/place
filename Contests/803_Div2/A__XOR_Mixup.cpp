@@ -1,11 +1,11 @@
 /*
-name: B - Between a and b ...
-group: AtCoder - AtCoder Beginner Contest 048
-url: https://atcoder.jp/contests/abc048/tasks/abc048_b
+name: A. XOR Mixup
+group: Codeforces - Codeforces Round #803 (Div. 2)
+url: https://codeforces.com/contest/1698/problem/0
 interactive: false
 memoryLimit: 256
-timeLimit: 2000
-Started At: 12:03:58 PM
+timeLimit: 1000
+Started At: 8:07:59 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -54,16 +54,31 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 
 
 void solve() {
-	ll a, b, x; read(a, b, x);
-	ll one = (a == 0 ? (0) : (a - 1) / x + 1) ,
-	   two = b / x + 1;
+	ll n; read(n);
+	vll arr; read_array(n, arr);
 
-	ll ans = max(0LL, two - one);
-	cout << ans << endl;
+	ll res = 0;
+
+	for (int i = 0; i < n; i++) {
+		ll t = 0;
+		for (int j = 0; j < n; j++) {
+			if (j == i) continue;
+			t ^= arr[j];
+		}
+		if (t == arr[i]) {
+			res = t;
+			break;
+		}
+	}
+
+
+
+
+	cout << res << endl;
 }
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+	cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}

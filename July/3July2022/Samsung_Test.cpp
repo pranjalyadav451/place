@@ -74,12 +74,53 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
+typedef long long ll;
+const ll INF = 1e15;
+
+ll dp[6][45][601];
+
+
+ll rec(vector<vector<ll>> &arr, int i, ll d, ll e) {
+	if (d <= 0) {
+		return 0;
+	}
+	if (i == arr.size()) return INF;
+	ll &ans = dp[i][d][e];
+	if (ans != -1) return ans;
+
+	ans =  INF;
+
+	if (e >= arr[i][1]) {
+		ans = arr[i][0] + rec(arr, i, d - 1, e - arr[i][1]);
+	}
+	ans = min(ans, rec(arr, i + 1, d , e));
+	return ans;
 }
+
+void solve() {
+	long long totalEnergy , dist;
+	cin >> totalEnergy >> dist;
+
+	ll n = 5;
+	vector<vector<ll>> arr(n, vector<ll>(2));
+
+	for (int i = 0; i < n; i++) {
+		ll m , s, energy;
+		cin >> m >> s >> energy;
+
+		ll time = m * 60 + s;
+		arr[i][0] = time , arr[i][1] = energy;
+	}
+	memset(dp, -1, sizeof(dp));
+	ll mn = rec(arr, 0, dist, totalEnergy);
+	cout << mn / 60 << " " << mn % 60 << endl;
+}
+
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
-	while (tt--) {
+	cin >> tt;
+	for (int i = 1; i <= tt; i++) {
+		cout << "#" << i << " ";
 		solve();
 	}
 }

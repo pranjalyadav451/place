@@ -1,5 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
+// ghatiya sawal // this is not the correct solution
+
 
 // #include <ext/pb_ds/assoc_container.hpp>
 // #include <ext/pb_ds/tree_policy.hpp>
@@ -73,10 +75,112 @@ vector<string >process(string &str) {vector<string> res; string temp = ""; for (
 template<typename ...Args> void logger(string vars, Args&&... values) {string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {cout << delim << labels[i] << arrow << content[i]; delim = ", "; } cout << " ]" << endl; }
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
+map<int, vector<string>> mp = {
+	{0, {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}},
+	{1, {"ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"}},
+	{2, {"hundred"}},
+};
+
+map<int, vector<string>> placevalue = {
+	{1, {"thousand"}},
+	{2, {"lakh"}},
+	{3, {"crore"}},
+};
+
+vector<string> for11to19 = {
+	"eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+};
+
+
+
+void genParts(string &A, vector<string> &num) {
+	int n = A.size();
+	bool flag = false;
+	int step = 3;
+
+	for (int i = n - 1; i >= 0;) {
+		string temp;
+		int t = step;
+
+		flag = true;
+
+		while (t and i >= 0) {
+			temp.push_back(A[i]);
+			t--; i--;
+		}
+		reverse(temp.begin(), temp.end());
+		if (temp.size() > 0)
+			num.push_back(temp);
+
+		if (step == 3) {
+			step = 2;
+		}
+	}
+	if (num.size() == 5) {
+		string last = num.back();
+		num.pop_back();
+		last += num[num.size() - 1];
+		num[num.size() - 1] = last;
+	}
+	reverse(num.begin(), num.end());
+}
+
+int amount_in_words(string A, string B) {
+	vector<string> num;
+	genParts(A, num);
+	// log(num);
+	int n = num.size();
+
+
+	string words;
+
+	for (int i = n - 1; i >= 0; i--) {
+		int pos = n - 1 - i;
+		int digit = stoi(num[i]);
+		if (digit == 0) continue;
+
+		int hundreds = (digit % 1000) / 100 , tens = (digit % 100) / 10 , ones = digit % 10;
+
+		string to_add = "";
+		if (hundreds) {
+			to_add += mp[0][hundreds - 1] + "-" + mp[2][0] + "-";
+		}
+		int tensAndOnes = digit % 100;
+		if (tensAndOnes >= 11 and tensAndOnes <= 19) {
+			if (hundreds) to_add = to_add + "and" + "-";
+			to_add += for11to19[tensAndOnes - 11] + "-";
+		}
+		else {
+			if (hundreds and (tens or ones)) to_add = to_add + "and" + "-";
+			if (tens) {
+				to_add += mp[1][tens - 1] + "-";
+			}
+			if (ones) {
+				to_add += mp[0][ones - 1] + "-";
+			}
+		}
+		if (pos != 0) {
+			to_add += placevalue[pos][0];
+			words = to_add + "-" + words;
+		}
+		else {
+			words = to_add;
+		}
+	}
+	if (words.size() and words.back() == '-')
+		words.pop_back();
+	return words == B;
+}
 
 void solve() {
+	string a , b;
+	read(a, b);
+	int ans = amount_in_words(a, b);
+
 }
 int main() {
+	// ghatiya sawal // this is not the correct solution
+
 	int tt = 1;
 	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
 	while (tt--) {

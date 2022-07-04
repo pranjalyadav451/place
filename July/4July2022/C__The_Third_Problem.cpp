@@ -1,12 +1,13 @@
 /*
-name: A - Range Flip Find Route
-group: AtCoder - AtCoder Grand Contest 043
-url: https://atcoder.jp/contests/agc043/tasks/agc043_a
+name: C. The Third Problem
+group: Codeforces - Codeforces Round #804 (Div. 2)
+url: https://codeforces.com/contest/1699/problem/C
 interactive: false
-memoryLimit: 1024
-timeLimit: 2000
-Started At: 12:03:56 PM
+memoryLimit: 256
+timeLimit: 1000
+Started At: 9:34:57 PM
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -56,6 +57,68 @@ typedef long double                         ld;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
+template <long long MOD = 1000000007>
+class Modular {
+public:
+	long long value;
+	static const long long MOD_value = MOD;
+
+	Modular(long long v = 0) {
+		value = v % MOD; if (value < 0) value += MOD;
+	}
+	Modular(long long a, long long b) : value(0) {
+		*this += a; *this /= b;
+	}
+
+	Modular &operator+=(Modular const &b) {
+		value += b.value; if (value >= MOD) value -= MOD; return *this;
+	}
+	Modular &operator-=(Modular const &b) {
+		value -= b.value; if (value < 0) value += MOD; return *this;
+	}
+	Modular &operator*=(Modular const &b) {
+		value = (long long)value * b.value % MOD; return *this;
+	}
+
+	friend Modular mexp(Modular a, long long e) {
+		Modular res = 1LL; while (e) {
+			if (e & 1LL) res *= a; a *= a; e >>= 1LL;
+		}
+		return res;
+	}
+	friend Modular inverse(Modular a) {
+		return mexp(a, MOD - 2LL);
+	}
+
+	Modular &operator/=(Modular const &b) {
+		return *this *= inverse(b);
+	}
+	friend Modular operator+(Modular a, Modular const b) {
+		return a += b;
+	}
+	friend Modular operator-(Modular a, Modular const b) {
+		return a -= b;
+	}
+	friend Modular operator-(Modular const a) {
+		return 0LL - a;
+	}
+	friend Modular operator*(Modular a, Modular const b) {
+		return a *= b;
+	}
+	friend Modular operator/(Modular a, Modular const b) {
+		return a /= b;
+	}
+	friend std::ostream &operator<<(std::ostream &os, Modular const &a) {
+		return os << a.value;
+	}
+	friend bool operator==(Modular const &a, Modular const &b) {
+		return a.value == b.value;
+	}
+	friend bool operator!=(Modular const &a, Modular const &b) {
+		return a.value != b.value;
+	}
+};
+
 
 template<typename T> void read_array(ll n, vector<T> &arr) {
 	arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
@@ -66,29 +129,39 @@ template<typename... Args> void read(Args&... args) {
 
 vector<string >process(string &str) {
 	vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
-		if (str[i] == ',') {
+		if (str[i] == '|') {
 			res.push_back(temp); temp = ""; i++;
 		}
 		else temp.push_back(str[i]);
 	} res.push_back(temp); return res;
 }
 template<typename ...Args> void logger(string vars, Args&&... values) {
-	string delim = ""; stringstream ss; (..., (ss << delim << values, delim = ", ")); delim = ""; string arrow = " : ", str_values = ss.str(); auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
+	string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
 		cout << delim << labels[i] << arrow << content[i]; delim = ", ";
 	} cout << " ]" << endl;
 }
-#define log_all(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
+#define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
+vll fact;
+const int mod = 1e9 + 7;
 
-void solve() {
-	int a, b, c;
-	log_all(a, b, c);
+void gen_fact() {
+	int n = 1e6;
+	fact.resize(n + 1);
+	fact[0] = 1;
+	for (int i = 1; i <= n; i++) {
+		fact[i] = ((fact[i - 1] % mod) * i) % mod;
+	}
 }
+
+
+void solve() {}
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+	gen_fact();
+
+	cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}
-
 }

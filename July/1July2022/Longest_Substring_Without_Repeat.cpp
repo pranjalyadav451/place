@@ -74,12 +74,50 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
+bool is(string &s, int k) {
+	set<int> uniq;
+	int n = s.size();
+	for (int i = 0; i < k; i++) {
+		uniq.insert(s[i]);
+	}
+	int mx = uniq.size();
+
+	for (int i = k; i < n; i++) {
+		// if (uniq.count(s[i - k]))
+		uniq.erase(s[i - k]);
+		uniq.insert(s[i]);
+		mx = max(mx, (int)uniq.size());
+	}
+	return mx >= k;
 }
+
+int lengthOfLongestSubstring(string s) {
+	map<int, int> id;
+	int n = s.size();
+	int mx = 0, len = 0, prev = -1;
+
+	for (int i = 0; i < n; i++) {
+		if (id.count(s[i])) {
+			log(prev, i);
+			prev = max(prev, id[s[i]]);
+			len = i - prev;
+			id.erase(s[i]);
+		}
+		else {
+			len = i - prev;
+		}
+		id[s[i]] = i;
+		mx = max(mx, len);
+	}
+	return mx;
+}
+
 int main() {
 	int tt = 1;
 	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
 	while (tt--) {
-		solve();
+		string s; read(s);
+		int ans = lengthOfLongestSubstring(s);
+		log(ans);
 	}
 }

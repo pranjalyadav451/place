@@ -35,35 +35,6 @@ typedef long double                         ld;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template <long long MOD = 1000000007>
-class Modular {
-public:
-	long long value;
-	static const long long MOD_value = MOD;
-
-	Modular(long long v = 0) { value = v % MOD; if (value < 0) value += MOD;}
-	Modular(long long a, long long b) : value(0) { *this += a; *this /= b;}
-
-	Modular& operator+=(Modular const& b) {value += b.value; if (value >= MOD) value -= MOD; return *this;}
-	Modular& operator-=(Modular const& b) {value -= b.value; if (value < 0) value += MOD; return *this;}
-	Modular& operator*=(Modular const& b) {value = (long long)value * b.value % MOD; return *this;}
-
-	friend Modular mexp(Modular a, long long e) {
-		Modular res = 1LL; while (e) { if (e & 1LL) res *= a; a *= a; e >>= 1LL; }
-		return res;
-	}
-	friend Modular inverse(Modular a) { return mexp(a, MOD - 2LL); }
-
-	Modular& operator/=(Modular const& b) { return *this *= inverse(b); }
-	friend Modular operator+(Modular a, Modular const b) { return a += b; }
-	friend Modular operator-(Modular a, Modular const b) { return a -= b; }
-	friend Modular operator-(Modular const a) { return 0LL - a; }
-	friend Modular operator*(Modular a, Modular const b) { return a *= b; }
-	friend Modular operator/(Modular a, Modular const b) { return a /= b; }
-	friend std::ostream& operator<<(std::ostream& os, Modular const& a) {return os << a.value;}
-	friend bool operator==(Modular const& a, Modular const& b) {return a.value == b.value;}
-	friend bool operator!=(Modular const& a, Modular const& b) {return a.value != b.value;}
-};
 
 
 template<typename T> void read_array(ll n, vector<T> &arr) {arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i]; }
@@ -74,7 +45,65 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
+vector<int> findSubstring(string A, const vector<string> &words) {
+	deque<int> d;
+	unordered_map<deque<int>, int> wm;
+
+	int wlist_size = words.size(), w_size = -1;
+
+	for (int i = 0; i < wlist_size; i++) {
+		deque<int> temp;
+		w_size = words[i].size();
+
+		for (int j = 0; j < words[i].size(); i++) {
+			deque.push_back(words[i][j]);
+		}
+		wm[temp]++;
+	}
+
+	int asize = A.size();
+	deque<int> t;
+	map<deque<int>, int> cm;
+	int cnt = 0;
+	vector<int> res;
+
+	for (int i = 0; i < asize; i++) {
+		if (t.size() == w_size) {
+			cm[t]++;
+			if (cm[t] <= wm[t]) {
+				count++;
+				t.clear();
+			}
+			else {
+				t.pop_front();
+				count = 0;
+				cm.clear();
+			}
+		}
+
+		if (count == wlist_size) {
+			res.push_back(i - wlist_size * w_size + 1);
+			count = 0;
+			t.clear();
+			cm.clear();
+
+		}
+		t.push_back(A[i]);
+	}
+	return res;
+}
+
+
+
 void solve() {
+	string s;
+	read(s);
+
+	int n; read(n);
+	vector<string> words; read_array(n, words);
+
+	vector<int> res = findSubstring(string A, words);
+	log(res);
 }
 int main() {
 	int tt = 1;

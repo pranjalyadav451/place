@@ -74,7 +74,95 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
+
+int gcd (int a, int b) {
+	return b ? gcd (b, a % b) : a;
+}
+
+string str_slope(int num , int den, int neg) {
+	string ret = (neg ? "-" : "") + to_string(num) + "/" + to_string(den);
+	return ret;
+}
+
+string get_slope(pair<int, int> a, pair<int, int> b) {
+
+	// log(a, b);
+	int den = a.first - b.first , num = a.second - b.second;
+	// log(num, den);
+	// cout << endl;
+
+	bool neg = false;
+	if (num < 0 and den < 0)  neg  = false;
+	else if (neg < 0 or den < 0) {
+		neg = true;
+	}
+
+	num = abs(num), den = abs(den);
+	string ret = "";
+	if (den == 0) {
+		ret = "pi/2";
+	}
+	else if (num == 0) {
+		ret = "0";
+	}
+	else {
+		int common = gcd(num, den);
+		num /= common; den /= common;
+		ret = str_slope(num, den, neg);
+	}
+	return ret;
+}
+
+
+int maxPoints(vector<int> &A, vector<int> &B) {
+	int n = A.size();
+
+	vector<pair<int, int>> points;
+	map<pair<int, int>, int> cnt;
+
+	for (int i = 0; i < n; i++) {
+		points.push_back(pair(A[i], B[i]));
+		cnt[points.back()]++;
+	}
+	sort(points.begin(), points.end());
+
+	map<pair<int, int>, map<string, int>> mp;
+
+	for (int i = 0; i < n;) {
+		auto curr = points[i];
+		mp[curr]["SAME"] = cnt[curr];
+		i += cnt[curr];
+
+		for (int j = i; j < n;) {
+			auto t = points[j];
+			j += cnt[t];
+			string slope = get_slope(curr, t);
+			if (mp[curr][slope] == 0) mp[curr][slope] += cnt[curr];
+			mp[curr][slope] += cnt[t];
+		}
+	}
+	int mx = 0;
+	for (auto [point, map_slopes] : mp) {
+		// log(point, map_slopes);
+		for (auto [slope, cnt] : map_slopes) {
+			mx = max(mx, cnt);
+		}
+	}
+
+	return mx;
+}
+
+
+
 void solve() {
+	int n; read(n);
+	vector<int> X(n), Y(n);
+	for (int i = 0; i < n; i++) {
+		read(X[i], Y[i]);
+	}
+
+	int ans = maxPoints(X, Y);
+	log(ans);
 }
 int main() {
 	int tt = 1;

@@ -1,11 +1,11 @@
 /*
-name: B - Between a and b ...
-group: AtCoder - AtCoder Beginner Contest 048
-url: https://atcoder.jp/contests/abc048/tasks/abc048_b
+name: C. 3SUM Closure
+group: Codeforces - Codeforces Round #803 (Div. 2)
+url: https://codeforces.com/contest/1698/problem/C
 interactive: false
 memoryLimit: 256
-timeLimit: 2000
-Started At: 12:03:58 PM
+timeLimit: 1000
+Started At: 8:42:33 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -53,17 +53,56 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log_all(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
-	ll a, b, x; read(a, b, x);
-	ll one = (a == 0 ? (0) : (a - 1) / x + 1) ,
-	   two = b / x + 1;
+bool check(vll &arr, int n) {
+	bool res = true;
+	set<ll> uniq;
+	for (int i = 0; i < n; i++) uniq.insert(arr[i]);
 
-	ll ans = max(0LL, two - one);
-	cout << ans << endl;
+	for (int i = 0; i < n; i++) {
+		for (int j = i + 1; j < n; j++) {
+			for (int k = j + 1; k < n; k++) {
+				ll t = arr[i] + arr[j] + arr[k];
+				if (uniq.count(t) == 0) return false;
+			}
+		}
+	}
+	return true;
+}
+
+void solve() {
+	ll n; read(n);
+	vll arr; read_array(n, arr);
+
+	ll p = 0 , neg = 0 , z = 0;
+	for (int i = 0; i < n; i++) {
+		p += arr[i] > 0;
+		neg += arr[i] < 0;
+		z += arr[i] == 0;
+	}
+
+	if (p > 2 or neg > 2) {
+		cout << "NO" << endl;
+		return;
+	}
+
+	vll B;
+	z = min(z, 3LL);
+	for (int i = 0; i < n; i++) {
+		if (arr[i] == 0 and z) {
+			B.push_back(arr[i]);
+			z--;
+		}
+		if (arr[i] != 0)
+			B.push_back(arr[i]);
+	}
+
+
+	bool ans = check(B, B.size());
+	cout << (ans ? "YES" : "NO") << endl;
 }
 int main() {
 	int tt = 1;
-	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+	cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
 	while (tt--) {
 		solve();
 	}

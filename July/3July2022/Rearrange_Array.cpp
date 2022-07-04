@@ -74,12 +74,53 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
-}
-int main() {
-	int tt = 1;
-	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
-	while (tt--) {
-		solve();
+
+typedef pair<int, int> pii;
+
+void rec(vector<int> &arr, pii &startedAt , pii &curr, pii &next) {
+	pii one = {curr.second, curr.first};
+	if (one == next) return;
+
+	if (curr == next) return;
+	if (next == startedAt) {
+		arr[curr.second] = -next.first;
+		return ;
 	}
+	pii newCurr = next , newNext = {arr[newCurr.first], newCurr.first};
+	rec(arr, startedAt, newCurr, newNext);
+	arr[curr.second] = -next.first;
+	return;
+}
+
+
+void arrange1(vector<int> &arr) {
+	int N = arr.size();
+	for (int i = 0; i < N; i++) {
+		pii startedAt = {arr[i], i} , curr = startedAt, next = {arr[curr.first], curr.first};
+
+		if (arr[i] > 0) {
+			rec(arr, startedAt, curr, next);
+			arr[curr.second] = -next.first;
+		}
+	}
+	for (int i = 0; i < N; i++) {
+		arr[i] = - arr[i];
+	}
+}
+void arrange(vector<int> &arr) {
+	int n = arr.size();
+	for (int i = 0; i < n; i++) {
+		arr[i] = arr[i] + (arr[arr[i]] % n) * n;
+	}
+	for (int i = 0; i < n; i++) {
+		arr[i] = arr[i] / n;
+	}
+}
+
+int main() {
+	int n; read(n);
+	std::vector<int> v; read_array(n, v);
+	// log(v);
+	arrange(v);
+	log(v);
 }

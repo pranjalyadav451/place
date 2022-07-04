@@ -1,12 +1,13 @@
 /*
-name: E. Price Maximization
-group: Codeforces - Codeforces Round #797 (Div. 3)
-url: https://codeforces.com/problemset/problem/1690/E
+name: D - Powerful Discount Tickets
+group: AtCoder - AtCoder Beginner Contest 141
+url: https://atcoder.jp/contests/abc141/tasks/abc141_d
 interactive: false
-memoryLimit: 256
+memoryLimit: 1024
 timeLimit: 2000
-Started At: 2:41:39 PM
+Started At: 12:04:00 PM
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -14,9 +15,8 @@ using namespace std;
 // #include <ext/pb_ds/tree_policy.hpp>
 // using namespace __gnu_pbds;
 // typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> oset;
-
 int fastio() {
-	ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0;
+    ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0;
 } int __fastio = fastio();
 template<typename A, typename B>    ostream &operator<<(ostream &os, const pair<A, B> &p);
 template<typename A>                ostream &operator<<(ostream &os, const set<A> &m) {os << "{"; string sep = ""; for (auto e : m) os << sep << e, sep = ", "; return os << "}"; }
@@ -35,9 +35,6 @@ typedef vector<pll>                         vpl;
 typedef pair<int, int>                      pii;
 typedef long double                         ld;
 
-
-
-
 #define all(x)                              (x).begin(),(x).end()
 #define REP(i, a, b)                        for (int i = (a); i <= (b); (i)++)
 #define RREP(i, a, b)                       for (int i = (a); i >= (b); (i)--)
@@ -47,33 +44,32 @@ typedef long double                         ld;
 template <long long MOD = 1000000007>
 class Modular {
 public:
-	long long value;
-	static const long long MOD_value = MOD;
+    long long value;
+    static const long long MOD_value = MOD;
 
-	Modular(long long v = 0) { value = v % MOD; if (value < 0) value += MOD;}
-	Modular(long long a, long long b) : value(0) { *this += a; *this /= b;}
+    Modular(long long v = 0) { value = v % MOD; if (value < 0) value += MOD;}
+    Modular(long long a, long long b) : value(0) { *this += a; *this /= b;}
 
-	Modular& operator+=(Modular const& b) {value += b.value; if (value >= MOD) value -= MOD; return *this;}
-	Modular& operator-=(Modular const& b) {value -= b.value; if (value < 0) value += MOD; return *this;}
-	Modular& operator*=(Modular const& b) {value = (long long)value * b.value % MOD; return *this;}
+    Modular& operator+=(Modular const& b) {value += b.value; if (value >= MOD) value -= MOD; return *this;}
+    Modular& operator-=(Modular const& b) {value -= b.value; if (value < 0) value += MOD; return *this;}
+    Modular& operator*=(Modular const& b) {value = (long long)value * b.value % MOD; return *this;}
 
-	friend Modular mexp(Modular a, long long e) {
-		Modular res = 1LL; while (e) { if (e & 1LL) res *= a; a *= a; e >>= 1LL; }
-		return res;
-	}
-	friend Modular inverse(Modular a) { return mexp(a, MOD - 2LL); }
+    friend Modular mexp(Modular a, long long e) {
+        Modular res = 1LL; while (e) { if (e & 1LL) res *= a; a *= a; e >>= 1LL; }
+        return res;
+    }
+    friend Modular inverse(Modular a) { return mexp(a, MOD - 2LL); }
 
-	Modular& operator/=(Modular const& b) { return *this *= inverse(b); }
-	friend Modular operator+(Modular a, Modular const b) { return a += b; }
-	friend Modular operator-(Modular a, Modular const b) { return a -= b; }
-	friend Modular operator-(Modular const a) { return 0LL - a; }
-	friend Modular operator*(Modular a, Modular const b) { return a *= b; }
-	friend Modular operator/(Modular a, Modular const b) { return a /= b; }
-	friend std::ostream& operator<<(std::ostream& os, Modular const& a) {return os << a.value;}
-	friend bool operator==(Modular const& a, Modular const& b) {return a.value == b.value;}
-	friend bool operator!=(Modular const& a, Modular const& b) {return a.value != b.value;}
+    Modular& operator/=(Modular const& b) { return *this *= inverse(b); }
+    friend Modular operator+(Modular a, Modular const b) { return a += b; }
+    friend Modular operator-(Modular a, Modular const b) { return a -= b; }
+    friend Modular operator-(Modular const a) { return 0LL - a; }
+    friend Modular operator*(Modular a, Modular const b) { return a *= b; }
+    friend Modular operator/(Modular a, Modular const b) { return a /= b; }
+    friend std::ostream& operator<<(std::ostream& os, Modular const& a) {return os << a.value;}
+    friend bool operator==(Modular const& a, Modular const& b) {return a.value == b.value;}
+    friend bool operator!=(Modular const& a, Modular const& b) {return a.value != b.value;}
 };
-
 
 template<typename T> void read_array(ll n, vector<T> &arr) {arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i]; }
 template<typename... Args> void read(Args&... args) {((cin >> args), ...); }
@@ -84,45 +80,33 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 
 
 void solve() {
-	ll n , k; read(n, k);
-	vll arr; read_array(n, arr);
+    ll n , m; read(n, m);
+    vll arr(n); read_array(n, arr);
 
-	sort(all(arr));
+    multiset<ll> ord;
+    for (int i = 0; i < n; i++) {
+        ord.insert(arr[i]);
+    }
 
-	multiset<pll> ord;
-
-	for (int i = 0; i < n; i++) {
-		ord.insert({arr[i] % k, arr[i]});
-	}
-	ll price = 0;
-	for (int i = 0; i < n; i++) {
-		pll curr = {arr[i] % k, arr[i]};
-
-		if (not ord.count(curr)) continue;
-		ll req = k - arr[i] % k;
-		ord.erase(ord.find(curr));
-		auto found = ord.lower_bound({req, req});
-
-		if (found != ord.end()) {
-			pll t = *found;
-			price += (curr.second + t.second) / k;
-			ord.erase(found);
-		}
-		else {
-			ord.insert(curr);
-		}
-	}
-	for (auto it = ord.begin(); it != ord.end(); it++) {
-		price += (it->second + (++it)->second) / k;
-	}
-	cout << price << endl;
-
-
+    while (ord.size() != ord.count(0) and m > 0) {
+        ll biggest = *ord.rbegin();
+        ord.erase(ord.find(biggest));
+        ll curr_biggest = (ord.rbegin() != ord.rend() ? *ord.rbegin() : 0);
+        while (biggest >= curr_biggest and m > 0) {
+            biggest /= 2;
+            m--;
+        }
+        ord.insert(biggest);
+    }
+    ll cost = 0;
+    for (auto p : ord) {
+        cost += p;
+    }
+    cout << cost << endl;
 }
 int main() {
-	int tt = 1;
-	cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
-	while (tt--) {
-		solve();
-	}
+    int tt = 1;
+    while (tt--) {
+        solve();
+    }
 }

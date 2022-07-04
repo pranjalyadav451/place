@@ -73,13 +73,48 @@ vector<string >process(string &str) {vector<string> res; string temp = ""; for (
 template<typename ...Args> void logger(string vars, Args&&... values) {string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {cout << delim << labels[i] << arrow << content[i]; delim = ", "; } cout << " ]" << endl; }
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
+int is(string &A, int insertions) {
+	int start = insertions;
+	string part = A.substr(start);
 
-void solve() {
+	log(part);
+	int n = part.size();
+	for (int i = 0; i < n / 2; i++) {
+		if (part[i] != part[n - i - 1]) return false;
+	}
+	return true;
+}
+int solve(string A) {
+	int n = A.size();
+
+	int l = 0, r = n , m = 0, ans = -1;
+	while (l <= r) {
+		m = l + (r - l) / 2;
+		log(l, r, m);
+
+		if (is(A, m)) {
+			log("Possible");
+			r = m - 1;
+			ans = m;
+		}
+		else {
+			l = m + 1;
+		}
+		cout << endl;
+	}
+	return ans;
+}
+
+
+void input() {
+	string s; read(s);
+	int min = solve(s);
+	log(min);
 }
 int main() {
 	int tt = 1;
 	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
 	while (tt--) {
-		solve();
+		input();
 	}
 }

@@ -7,7 +7,7 @@ using namespace std;
 // typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> oset;
 
 int fastio() {
-	ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0;
+    ios_base::sync_with_stdio(false); cout << fixed << setprecision(10); cin.tie(nullptr); return 0;
 } int __fastio = fastio();
 template<typename A, typename B>    ostream &operator<<(ostream &os, const pair<A, B> &p);
 template<typename A>                ostream &operator<<(ostream &os, const set<A> &m) {os << "{"; string sep = ""; for (auto e : m) os << sep << e, sep = ", "; return os << "}"; }
@@ -38,31 +38,31 @@ typedef long double                         ld;
 template <long long MOD = 1000000007>
 class Modular {
 public:
-	long long value;
-	static const long long MOD_value = MOD;
+    long long value;
+    static const long long MOD_value = MOD;
 
-	Modular(long long v = 0) { value = v % MOD; if (value < 0) value += MOD;}
-	Modular(long long a, long long b) : value(0) { *this += a; *this /= b;}
+    Modular(long long v = 0) { value = v % MOD; if (value < 0) value += MOD;}
+    Modular(long long a, long long b) : value(0) { *this += a; *this /= b;}
 
-	Modular& operator+=(Modular const& b) {value += b.value; if (value >= MOD) value -= MOD; return *this;}
-	Modular& operator-=(Modular const& b) {value -= b.value; if (value < 0) value += MOD; return *this;}
-	Modular& operator*=(Modular const& b) {value = (long long)value * b.value % MOD; return *this;}
+    Modular& operator+=(Modular const& b) {value += b.value; if (value >= MOD) value -= MOD; return *this;}
+    Modular& operator-=(Modular const& b) {value -= b.value; if (value < 0) value += MOD; return *this;}
+    Modular& operator*=(Modular const& b) {value = (long long)value * b.value % MOD; return *this;}
 
-	friend Modular mexp(Modular a, long long e) {
-		Modular res = 1LL; while (e) { if (e & 1LL) res *= a; a *= a; e >>= 1LL; }
-		return res;
-	}
-	friend Modular inverse(Modular a) { return mexp(a, MOD - 2LL); }
+    friend Modular mexp(Modular a, long long e) {
+        Modular res = 1LL; while (e) { if (e & 1LL) res *= a; a *= a; e >>= 1LL; }
+        return res;
+    }
+    friend Modular inverse(Modular a) { return mexp(a, MOD - 2LL); }
 
-	Modular& operator/=(Modular const& b) { return *this *= inverse(b); }
-	friend Modular operator+(Modular a, Modular const b) { return a += b; }
-	friend Modular operator-(Modular a, Modular const b) { return a -= b; }
-	friend Modular operator-(Modular const a) { return 0LL - a; }
-	friend Modular operator*(Modular a, Modular const b) { return a *= b; }
-	friend Modular operator/(Modular a, Modular const b) { return a /= b; }
-	friend std::ostream& operator<<(std::ostream& os, Modular const& a) {return os << a.value;}
-	friend bool operator==(Modular const& a, Modular const& b) {return a.value == b.value;}
-	friend bool operator!=(Modular const& a, Modular const& b) {return a.value != b.value;}
+    Modular& operator/=(Modular const& b) { return *this *= inverse(b); }
+    friend Modular operator+(Modular a, Modular const b) { return a += b; }
+    friend Modular operator-(Modular a, Modular const b) { return a -= b; }
+    friend Modular operator-(Modular const a) { return 0LL - a; }
+    friend Modular operator*(Modular a, Modular const b) { return a *= b; }
+    friend Modular operator/(Modular a, Modular const b) { return a /= b; }
+    friend std::ostream& operator<<(std::ostream& os, Modular const& a) {return os << a.value;}
+    friend bool operator==(Modular const& a, Modular const& b) {return a.value == b.value;}
+    friend bool operator!=(Modular const& a, Modular const& b) {return a.value != b.value;}
 };
 
 
@@ -74,12 +74,62 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
+
+typedef map<pair<int, int>, char> zigm;
+
+void go_down(zigm &mp, int &r, int &c, int b, int& start, string &str) {
+    for (; r < b; r++, c++) {
+        if (start < str.size()) {
+            pair<int, int> pos = {r, c};
+            mp[pos] = str[start++];
+        }
+        else break;
+    }
+    r = max(r - 2, 0);
 }
+void go_up(zigm & mp, int &r, int &c, int b, int &start, string & str) {
+    for (; r >= 0; r--, c++) {
+        if (start < str.size()) {
+            pair<int, int> pos = {r, c};
+            mp[pos] = str[start++];
+        }
+        else
+            break;
+    }
+    r = min(1, r + 2);
+}
+
+
+
+
+
+string convert(string A, int B) {
+    int r = 0, c = 0;
+    zigm mp;
+    int start = 0;
+
+    while (mp.size() < A.size() and start < A.size()) {
+        go_down(mp, r, c, B, start, A);
+        go_up(mp, r, c, B, start, A);
+    }
+
+
+    string res;
+    for (auto a : mp) {
+        res.push_back(a.second);
+    }
+
+    for (auto a : mp) {
+        log(a);
+    }
+
+    return res;
+
+}
+
 int main() {
-	int tt = 1;
-	// cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
-	while (tt--) {
-		solve();
-	}
+    string a; int b;
+    cin >> a >> b;
+    string res = convert(a, b);
+    cout << res << endl;
 }

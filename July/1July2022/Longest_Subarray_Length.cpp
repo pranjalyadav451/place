@@ -16,6 +16,7 @@ template<typename A, typename B>    ostream &operator<<(ostream &os, const map<A
 template<typename T>                ostream &operator<<(ostream &os, const vector<T> &v) {os << "["; string sep = ""; for (auto e : v) os << sep << e, sep = ", "; return os << "]"; }
 template<typename T, size_t L>      ostream &operator<<(ostream &os, const array<T, L> &v) {os << "["; string sep = ""; for (int i = 0; i < L; ++i) os << sep << v[i], sep = ", "; return os << "]"; }
 template<typename A, typename B>    ostream &operator<<(ostream &os, const pair<A, B> &p) {os << '(' << p.first << ", " << p.second << ')'; return os; }
+template<typename A, typename B>    ostream &operator<<(ostream &os, const map<A, B, greater<int>> &m) {os << "{"; string sep = ""; for (auto e : m) os << sep << e.first << ": " << e.second, sep = ", "; return os << "}"; }
 
 
 typedef long long                           ll;
@@ -35,35 +36,6 @@ typedef long double                         ld;
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template <long long MOD = 1000000007>
-class Modular {
-public:
-	long long value;
-	static const long long MOD_value = MOD;
-
-	Modular(long long v = 0) { value = v % MOD; if (value < 0) value += MOD;}
-	Modular(long long a, long long b) : value(0) { *this += a; *this /= b;}
-
-	Modular& operator+=(Modular const& b) {value += b.value; if (value >= MOD) value -= MOD; return *this;}
-	Modular& operator-=(Modular const& b) {value -= b.value; if (value < 0) value += MOD; return *this;}
-	Modular& operator*=(Modular const& b) {value = (long long)value * b.value % MOD; return *this;}
-
-	friend Modular mexp(Modular a, long long e) {
-		Modular res = 1LL; while (e) { if (e & 1LL) res *= a; a *= a; e >>= 1LL; }
-		return res;
-	}
-	friend Modular inverse(Modular a) { return mexp(a, MOD - 2LL); }
-
-	Modular& operator/=(Modular const& b) { return *this *= inverse(b); }
-	friend Modular operator+(Modular a, Modular const b) { return a += b; }
-	friend Modular operator-(Modular a, Modular const b) { return a -= b; }
-	friend Modular operator-(Modular const a) { return 0LL - a; }
-	friend Modular operator*(Modular a, Modular const b) { return a *= b; }
-	friend Modular operator/(Modular a, Modular const b) { return a /= b; }
-	friend std::ostream& operator<<(std::ostream& os, Modular const& a) {return os << a.value;}
-	friend bool operator==(Modular const& a, Modular const& b) {return a.value == b.value;}
-	friend bool operator!=(Modular const& a, Modular const& b) {return a.value != b.value;}
-};
 
 
 template<typename T> void read_array(ll n, vector<T> &arr) {arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i]; }
@@ -74,7 +46,38 @@ template<typename ...Args> void logger(string vars, Args&&... values) {string de
 #define log(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
+
+int len(vector<int> &arr) {
+	int n = arr.size();
+	vector<int> pref(n); pref[0] = arr[0] == 0 ? -1 : 1;
+	for (int i = 1; i < n; i++) {
+		pref[i] = pref[i - 1] + (arr[i] == 0 ? -1 : 1);
+	}
+	map<int, vector<int>, greater<int>> idx;
+	int ans = 0;
+
+	log(pref);
+
+	for (int i = 0; i < n; i++) {
+		int req = min(pref[i] - 1, );
+		auto l = idx.lower_bound(req);
+		if (l != idx.end()) {
+			ans = max(ans, i - (*l).second[0]);
+		}
+		idx[pref[i]].push_back(i);
+	}
+	if (ans == 0)
+		ans = count(arr.begin(), arr.end(), 1) > 0;
+	return ans;
+}
+
+
 void solve() {
+	int n; read(n);
+	vector<int> arr; read_array(n, arr);
+
+	int ans = len(arr);
+	log(ans);
 }
 int main() {
 	int tt = 1;
