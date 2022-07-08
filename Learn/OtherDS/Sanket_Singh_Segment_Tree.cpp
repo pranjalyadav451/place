@@ -70,47 +70,90 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define logger(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 /**
- * Segment Trees -> Taking the recursion pattern of merge sort and turning it
- * into a data structure.
+ * Segment Tree by Sanket Singh
+ * Source -: https://www.youtube.com/watch?v=oOufBRAEnUA&ab_channel=CodeChef
+ *
+
+ * Properties of Segment Tree
+    * It is a binary tree.
+    * Type of Binary Tree - Full
+    * * What is a full binary tree ?
+    *   * A binary tree in which every node has exactly either 2 or 0 children.
+    * * Heap is a complete binary tree but segment tree is a 'full' binary tree.
+    *
 */
 
-class AbstractQuery {
+class Segment_Range_Sum {
+    long long N;
+    vector<ll> arr;
+    vector<ll> tree;
+    inline int get_left(int node) {
+        return (node >> 1);
+    };
+    inline int get_right(int node) {
+        return get_left(node) + 1;
+    };
+    inline int get_mid(int start, int end) {
+        return start + (end - start) / 2;
+    }
+
+    void build(int current_node, int start, int end) {
+        if (start == end) {
+            tree[current_node] = arr[start];
+            return;
+        }
+        int mid = get_mid(start, end), left_child = get_left(current_node), right_child = get_right(current_node);
+
+        build(left_child, start, mid);
+        build(right_child, mid + 1, end);
+        tree[current_node] = tree[left_child] + tree[right_child];
+    }
+
+    // point update
+    void update(int current_node, int idx_to_update, long long val_to_update, int start, int end) {
+        if (start == end) {
+            tree[current_node] = val_to_update;
+            return;
+        }
+
+        int mid = get_mid(start, end), left_child = get_left(current_node), right_child = get_right(current_node);
+        if (idx_to_update <= mid) {
+            update(left_child, idx_to_update, val_to_update, start, mid);
+        }
+        else {
+            update(right_child, idx_to_update, val_to_update, mid + 1, end);
+        }
+        tree[current_node] = tree[left_child] + tree[right_child];
+    }
+    long long query(int current_node, int query_start, int query_end, int start, int end) {
+        if (end < query_start or start > query_end) return 0;
+        if (query_start <= start and query_end >= end) {
+            return tree[current_node];
+        }
+
+        int mid = get_mid(start, end), left_child = get_left(current_node), right_child = get_right(current_node);
+
+        ll get_from_left = query(left_child, query_start, query_end, start, mid);
+        ll get_from_right = query(right_child, query_start, query_end, mid + 1, end);
+
+        return get_from_left + get_from_right;
+    }
 public:
-    virtual void increment(int i, int j, int val) = 0;
-    virtual int minimum(int i, int j) = 0;
+    Segment_Range_Sum(int number_ele) {
+        this->N = number_ele;
+        arr.assign(4 * N, 0);
+        tree.assign(4 * N, 0);
+    }
+    long long find_query(int start, int end) {
+        assert(start <= end);
+        return query(1, start, end, 0, N - 1);
+    }
+    void update_idx(int idx, long long val) {
+        assert(idx >= 0 and idx < N);
+        update(1, idx, val, 0, N - 1);
+    }
+
 };
-
-class RangeSlow : public AbstractQuery {
-    vector<int> arr;
-    RangeSlow(int n) {
-        arr.assign(n, 0);
-    }
-    void increment(int i, int j, int val) {
-        for (int k = i; k <= j; k++) {
-            arr[k] += val;
-        }
-    }
-    int minimum(int i, int j) {
-        int res = arr[i];
-        for (int k = i + 1; k <= j; k++) {
-            res = min(arr[i], res);
-        }
-        return res;
-    }
-};
-
-class SegmentTree :public AbstractQuery {
-    int n;
-    vector<int> lo, hi;
-    SegmentTree(int n) {
-        this->n = n;
-        lo.assign(4 * n + 1, 0);
-        hi.assign(4 * n + 1, 0);
-        init(1, 0, n - 1);
-    }
-}
-
-
 
 void solve() {
 

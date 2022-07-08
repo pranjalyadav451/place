@@ -1,3 +1,12 @@
+/*
+name: A. Grass Field
+group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
+url: https://codeforces.com/contest/1701/problem/A
+interactive: false
+memoryLimit: 256
+timeLimit: 1000
+Started At: 8:05:16 PM
+*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -69,55 +78,29 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 }
 #define logger(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
-/**
- * Segment Trees -> Taking the recursion pattern of merge sort and turning it
- * into a data structure.
-*/
-
-class AbstractQuery {
-public:
-    virtual void increment(int i, int j, int val) = 0;
-    virtual int minimum(int i, int j) = 0;
-};
-
-class RangeSlow : public AbstractQuery {
-    vector<int> arr;
-    RangeSlow(int n) {
-        arr.assign(n, 0);
-    }
-    void increment(int i, int j, int val) {
-        for (int k = i; k <= j; k++) {
-            arr[k] += val;
-        }
-    }
-    int minimum(int i, int j) {
-        int res = arr[i];
-        for (int k = i + 1; k <= j; k++) {
-            res = min(arr[i], res);
-        }
-        return res;
-    }
-};
-
-class SegmentTree :public AbstractQuery {
-    int n;
-    vector<int> lo, hi;
-    SegmentTree(int n) {
-        this->n = n;
-        lo.assign(4 * n + 1, 0);
-        hi.assign(4 * n + 1, 0);
-        init(1, 0, n - 1);
-    }
-}
-
-
 
 void solve() {
-
+    vvl arr(2, vll(2));
+    int cnt = 0;
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            cin >> arr[i][j];
+            cnt += (arr[i][j] == 1);
+        }
+    }
+    if (cnt == 0) {
+        cout << 0 << endl;
+    }
+    else if (cnt <= 3) {
+        cout << 1 << endl;
+    }
+    else {
+        cout << 2 << endl;
+    }
 }
 int main() {
     int tt = 1;
-    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }

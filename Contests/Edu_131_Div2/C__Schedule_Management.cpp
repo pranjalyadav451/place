@@ -1,3 +1,12 @@
+/*
+name: C. Schedule Management
+group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
+url: https://codeforces.com/contest/1701/problem/C
+interactive: false
+memoryLimit: 256
+timeLimit: 2000
+Started At: 8:20:18 PM
+*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -69,55 +78,54 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 }
 #define logger(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
-/**
- * Segment Trees -> Taking the recursion pattern of merge sort and turning it
- * into a data structure.
-*/
 
-class AbstractQuery {
-public:
-    virtual void increment(int i, int j, int val) = 0;
-    virtual int minimum(int i, int j) = 0;
-};
-
-class RangeSlow : public AbstractQuery {
-    vector<int> arr;
-    RangeSlow(int n) {
-        arr.assign(n, 0);
-    }
-    void increment(int i, int j, int val) {
-        for (int k = i; k <= j; k++) {
-            arr[k] += val;
+bool check(map<ll, ll> &cnt, ll time, ll workers, ll tasks) {
+    ll rem = tasks;
+    for (auto a : cnt) {
+        ll prof_tasks = a.second;
+        if (prof_tasks >= time) {
+            rem -= time;
+        }
+        else {
+            rem -= prof_tasks;
+            ll rem_time = (time - prof_tasks);
+            rem -= (rem_time) / 2;
         }
     }
-    int minimum(int i, int j) {
-        int res = arr[i];
-        for (int k = i + 1; k <= j; k++) {
-            res = min(arr[i], res);
-        }
-        return res;
-    }
-};
-
-class SegmentTree :public AbstractQuery {
-    int n;
-    vector<int> lo, hi;
-    SegmentTree(int n) {
-        this->n = n;
-        lo.assign(4 * n + 1, 0);
-        hi.assign(4 * n + 1, 0);
-        init(1, 0, n - 1);
-    }
+    return rem <= 0;
 }
 
-
-
 void solve() {
+    ll N, tasks;       read(N, tasks);
+    vll arr(tasks);    read_array(tasks, arr);
 
+    ll left = 1, right = tasks * 2, mid = 0, ans = -1;
+
+    map<ll, ll> cnt_prof;
+    for (int i = 0; i < N; i++) {
+        cnt_prof[i + 1] = 0;
+    }
+
+    for (int i = 0; i < tasks; i++) {
+        cnt_prof[arr[i]]++;
+    }
+
+    while (left <= right) {
+        mid = left + (right - left) / 2;
+        bool is = check(cnt_prof, mid, N, tasks);
+        if (is) {
+            ans = mid;
+            right = mid - 1;
+        }
+        else {
+            left = mid + 1;
+        }
+    }
+    cout << ans << endl;
 }
 int main() {
     int tt = 1;
-    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }

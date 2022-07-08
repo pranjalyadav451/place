@@ -1,3 +1,12 @@
+/*
+name: D. Permutation Restoration
+group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
+url: https://codeforces.com/contest/1701/problem/D
+interactive: false
+memoryLimit: 256
+timeLimit: 4000
+Started At: 8:54:54 PM
+*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -69,55 +78,21 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 }
 #define logger(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
-/**
- * Segment Trees -> Taking the recursion pattern of merge sort and turning it
- * into a data structure.
-*/
-
-class AbstractQuery {
-public:
-    virtual void increment(int i, int j, int val) = 0;
-    virtual int minimum(int i, int j) = 0;
-};
-
-class RangeSlow : public AbstractQuery {
-    vector<int> arr;
-    RangeSlow(int n) {
-        arr.assign(n, 0);
-    }
-    void increment(int i, int j, int val) {
-        for (int k = i; k <= j; k++) {
-            arr[k] += val;
-        }
-    }
-    int minimum(int i, int j) {
-        int res = arr[i];
-        for (int k = i + 1; k <= j; k++) {
-            res = min(arr[i], res);
-        }
-        return res;
-    }
-};
-
-class SegmentTree :public AbstractQuery {
-    int n;
-    vector<int> lo, hi;
-    SegmentTree(int n) {
-        this->n = n;
-        lo.assign(4 * n + 1, 0);
-        hi.assign(4 * n + 1, 0);
-        init(1, 0, n - 1);
-    }
-}
-
-
 
 void solve() {
+    ll n; read(n);
+    vll B(n); read_array(n, B);
 
+    vpl range(n + 1);
+    for (int i = 1; i <= n; i++) {
+        ll lo = (i) / (B[i - 1] + 1), hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
+        range[i] = { lo,hi };
+    }
+    logger(range);
 }
 int main() {
     int tt = 1;
-    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }
