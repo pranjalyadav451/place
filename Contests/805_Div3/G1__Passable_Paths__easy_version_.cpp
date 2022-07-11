@@ -1,11 +1,11 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: G1. Passable Paths (easy version)
+group: Codeforces - Codeforces Round #805 (Div. 3)
+url: https://codeforces.com/contest/1702/problem/G1
 interactive: false
 memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+timeLimit: 2000
+Started At: 9:53:01 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -49,7 +49,6 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 
 
 
-
 #define all(x)                              (x).begin(),(x).end()
 #define REP(i, a, b)                        for (int i = (a); i <= (b); (i)++)
 #define RREP(i, a, b)                       for (int i = (a); i >= (b); (i)--)
@@ -79,49 +78,52 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
+vector<int> visited;
+vll Euler;
+vvl graph;
 
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
-    }
-
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
-    }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
+void eulerTree(int u, int &index) {
+    visited[u] = 1;
+    Euler[index++] = u;
+    for (auto it : graph[u]) {
+        if (!visited[it]) {
+            eulerTree(it, index);
+            Euler[index++] = u;
         }
-        cout << "\n outside while \n";
     }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
 }
 
+void query() {
+
+}
+void solve() {
+    ll n; read(n);
+
+    graph.assign(n + 1, vll());
+    Euler.assign(2 * n + 1, 0);
+    visited.assign(n + 1, 0);
+
+    for (int i = 0; i < n - 1; i++) {
+        ll a, b; read(a, b);
+        graph[a].push_back(b);
+        graph[a].push_back(a);
+    }
+    out(graph);
+    // ** creating euler tree
+    int index = 0;
+    eulerTree(2, index);
+    out(Euler);
+
+    ll q; read(q);
+    while (q--) {
+        query();
+    }
+
+}
 int main() {
     int tt = 1;
-    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.

@@ -1,11 +1,11 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: Coin Combinations II
+group: CSES - CSES Problem Set
+url: https://cses.fi/problemset/task/1636
 interactive: false
-memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+memoryLimit: 512
+timeLimit: 1000
+Started At: 10:26:27 AM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -79,49 +79,44 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
+
+// ** not the correct intuition and approach to the problem
+
+// int rec(vll &coins, int total, int i = 0) {
+//     if (total == 0) return 1;
+//     if (i == coins.size()) return 0;
+
+//     int &ans = dp[total][i];
+//     if (ans != -1) return ans;
+//     ans = 0;
+//     if (total >= coins[i]) ans += rec(coins, total - coins[i], i);
+//     ans += rec(coins, total, i + 1);
+//     return ans;
+// }
+
+const int mod = 1e9 + 7;
+const int mx = 1e6;
+
 void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
+    ll n, total; read(n, total);
+    vector<int> coins(n); read_array(n, coins);
 
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
-    }
-
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
-    }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
+    ll dp[total + 1] = { 0 };
+    dp[0] = 1;
+    for (int weight = 0; weight <= total; weight++) {
+        for (int i = 1; i <= n; i++) {
+            if (weight - coins[i - 1] >= 0) {  // prevent out of bounds cases
+                dp[weight] += dp[weight - coins[i - 1]];
+                dp[weight] %= mod;
             }
-            else
-                where.pop();
         }
-        cout << "\n outside while \n";
     }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
+    int ans = dp[total];
+    cout << ans << endl;
 }
-
 int main() {
     int tt = 1;
-    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.

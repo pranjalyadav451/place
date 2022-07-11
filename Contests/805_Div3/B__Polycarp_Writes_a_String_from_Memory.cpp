@@ -1,11 +1,11 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: B. Polycarp Writes a String from Memory
+group: Codeforces - Codeforces Round #805 (Div. 3)
+url: https://codeforces.com/contest/1702/problem/B
 interactive: false
 memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+timeLimit: 2000
+Started At: 8:09:21 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -80,42 +80,27 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 
 
 void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
+    string str; read(str);
+    ll n = str.size();
+    set<char> uniq;
 
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
-    }
-
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
-    }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
+    int i = 0;
+    ll days = 0;
+    for (; i < n;) {
+        uniq.clear();
+        while (i < n and uniq.size() <= 3) {
+            uniq.insert(str[i]);
+            i++;
         }
-        cout << "\n outside while \n";
+        if (uniq.size() > 3)
+            i--;
+        // out(uniq);
+        // out(str[i], i);
+        days++;
     }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
+    if (i != n) days++;
+    cout << days << endl;
 }
-
 int main() {
     int tt = 1;
     cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
@@ -123,5 +108,3 @@ int main() {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.

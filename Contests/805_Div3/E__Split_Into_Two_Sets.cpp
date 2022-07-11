@@ -1,12 +1,13 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: E. Split Into Two Sets
+group: Codeforces - Codeforces Round #805 (Div. 3)
+url: https://codeforces.com/contest/1702/problem/E
 interactive: false
 memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+timeLimit: 2000
+Started At: 8:37:52 PM
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -79,43 +80,61 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
+vector<bool > visited;
 
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
-    }
+ll dfs(ll i, vvl &graph) {
+    if (visited[i]) return 0;
+    visited[i] = true;
 
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
+    ll ans = 0;
+    for (auto a : graph[i]) {
+        ans += dfs(a, graph);
     }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
-        }
-        cout << "\n outside while \n";
-    }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
+    return ans + 1;
 }
 
+bool check(vpl &arr) {
+    int n = arr.size();
+    map<ll, ll> cnt;
+    for (int i = 0; i < n; i++) {
+        auto [a, b] = arr[i];
+        cnt[a]++; cnt[b]++;
+    }
+    for (auto a : cnt) {
+        if (a.second != 2) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void solve() {
+    ll n; read(n);
+    vpl arr(n);
+    for (int i = 0; i < n; i++) {
+        ll a, b; read(a, b);
+        a--; b--;
+        arr[i] = { min(a,b),max(a,b) };
+    }
+    vector<vector<ll>> graph(n);
+    visited.assign(n, 0);
+    for (int i = 0; i < n; i++) {
+        auto [a, b] = arr[i];
+        graph[a].push_back(b);
+        graph[b].push_back(a);
+    }
+    bool is = check(arr);
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            ll cycle_len = dfs(i, graph);
+            if (cycle_len % 2) {
+                is = false;
+                break;
+            }
+        }
+    }
+    cout << (is ? "YES" : "NO") << endl;
+}
 int main() {
     int tt = 1;
     cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
@@ -123,5 +142,3 @@ int main() {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.

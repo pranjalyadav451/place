@@ -1,12 +1,3 @@
-/*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
-interactive: false
-memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -80,42 +71,37 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 
 
 void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
+    ll N; read(N);
+    vll B(N + 1);
+    for (int i = 1; i <= N; i++) cin >> B[i];
 
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
+    set<pll>current_active;
+    vector<vpl> start_at(N + 1), end_at(N + 1);
+
+
+    for (int i = 1; i <= N; i++) {
+        ll lo = (i) / (B[i] + 1) + 1
+            , hi = B[i] == 0 ? N : (i / B[i]);
+        start_at[lo].push_back({ hi,i });
+        end_at[hi].push_back({ hi,i });
     }
 
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
+    vll ans(N + 1);
+    for (int ele = 1; ele <= N; ele++) {
+        for (auto a : start_at[ele]) current_active.insert(a);
+
+        int idx_to_place = current_active.begin()->second;
+        current_active.erase(current_active.begin());
+
+        ans[idx_to_place] = ele;
+        for (auto a : end_at[ele]) current_active.erase(a);
     }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
-        }
-        cout << "\n outside while \n";
+
+    for (int i = 1; i <= N; i++) {
+        cout << ans[i] << " ";
     }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
+    cout << endl;
 }
-
 int main() {
     int tt = 1;
     cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
@@ -124,4 +110,9 @@ int main() {
     }
 }
 
-// practice problems about permutation and arrangement of numbers.
+
+
+
+
+
+

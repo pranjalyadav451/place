@@ -1,11 +1,11 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: C. Ball in Berland
+group: Codeforces - Codeforces Round #697 (Div. 3)
+url: https://codeforces.com/contest/1475/problem/C
 interactive: false
 memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+timeLimit: 2000
+Started At: 1:30:52 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -78,44 +78,31 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 }
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
-
-void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
-
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
-    }
-
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
-    }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
-        }
-        cout << "\n outside while \n";
-    }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
+ll nC2(ll n) {
+    return (n * (n - 1)) / 2;
 }
 
+
+void solve() {
+    ll boys, girls, K; read(boys, girls, K);
+
+    vll B(K), G(K);
+    read_array(K, B); read_array(K, G);
+
+    unordered_map<ll, ll> cnt_b, cnt_g;
+    ll ans = nC2(K);
+    for (int i = 0; i < K; i++) {
+        cnt_b[B[i]]++;
+        cnt_g[G[i]]++;
+    }
+    for (auto a : cnt_b) {
+        ans -= nC2(a.second);
+    }
+    for (auto a : cnt_g) {
+        ans -= nC2(a.second);
+    }
+    cout << ans << endl;
+}
 int main() {
     int tt = 1;
     cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
@@ -123,5 +110,3 @@ int main() {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.

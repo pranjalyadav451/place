@@ -1,12 +1,13 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: Dice Combinations
+group: CSES - CSES Problem Set
+url: https://cses.fi/problemset/task/1633
 interactive: false
-memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+memoryLimit: 512
+timeLimit: 1000
+Started At: 10:02:15 AM
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -76,52 +77,28 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
         cout << delim << labels[i] << arrow << content[i]; delim = ", ";
     } cout << " ]" << endl;
 }
-#define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
+#define logger(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
+
+const ll mod = 1e9 + 7;
 
 void solve() {
     ll n; read(n);
-    vll B(n); read_array(n, B);
-
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
-    }
-
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
-    }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
+    vll dp(n + 1);
+    dp[0] = 1, dp[1] = 1;
+    for (int i = 2; i <= n; i++) {
+        for (int j = max(0, i - 6); j < i; j++) {
+            dp[i] = (dp[i] % mod + dp[j] % mod) % mod;
         }
-        cout << "\n outside while \n";
     }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
+    // todo: have you done the modulo at each step ? - yes
+    // logger(dp);
+    cout << dp[n] << endl;
 }
-
 int main() {
     int tt = 1;
-    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.

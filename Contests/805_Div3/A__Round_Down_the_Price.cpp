@@ -1,11 +1,11 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: A. Round Down the Price
+group: Codeforces - Codeforces Round #805 (Div. 3)
+url: https://codeforces.com/contest/1702/problem/A
 interactive: false
 memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+timeLimit: 1000
+Started At: 8:05:40 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -80,42 +80,15 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 
 
 void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
-
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
+    ll m; read(m);
+    ll t = 1;
+    while (t <= m) {
+        t *= 10;
     }
-
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
-    }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
-        }
-        cout << "\n outside while \n";
-    }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
+    t /= 10;
+    ll ans = m - t;
+    cout << ans << endl;
 }
-
 int main() {
     int tt = 1;
     cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
@@ -123,5 +96,3 @@ int main() {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.

@@ -1,11 +1,11 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: D. Not a Cheap String
+group: Codeforces - Codeforces Round #805 (Div. 3)
+url: https://codeforces.com/contest/1702/problem/D
 interactive: false
 memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+timeLimit: 2000
+Started At: 8:28:10 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -79,49 +79,52 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
+map<char, int> to_int;
 
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
+void fill() {
+    for (int i = 'a'; i <= 'z'; i++) {
+        to_int[i] = i - 'a' + 1;
     }
-
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
-    }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
-        }
-        cout << "\n outside while \n";
-    }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
 }
 
+void solve() {
+    string W; read(W);
+    ll P; read(P);
+
+    ll init = 0;
+    priority_queue<pair<char, ll>> uniq;
+    ll n = W.size();
+
+    for (int i = 0; i < n; i++) {
+        char c = W[i];
+        uniq.push({ c,i });
+        init += to_int[c];
+    }
+    if (init <= P) {
+        cout << W << endl;
+        return;
+    }
+    multiset<ll> del;
+
+    while (uniq.size() and init > P) {
+        auto [ele, idx] = uniq.top();
+        del.insert(idx);
+        init -= to_int[ele];
+        uniq.pop();
+    }
+    // out(del);
+
+    for (int i = 0; i < n; i++) {
+        if (del.count(i)) continue;
+        cout << W[i];
+    }
+    cout << endl;
+}
 int main() {
     int tt = 1;
+    fill();
     cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.

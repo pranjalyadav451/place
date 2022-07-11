@@ -1,11 +1,11 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: Removing Digits
+group: CSES - CSES Problem Set
+url: https://cses.fi/problemset/task/1637/
 interactive: false
-memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+memoryLimit: 512
+timeLimit: 1000
+Started At: 2:01:16 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -79,49 +79,62 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
 
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
+vector<int> digits(8);
+void get_digits(int n) {
+    int i = 0;
+    digits.assign(8, 0);
+    while (n > 0) {
+        digits[i++] = n % 10;
+        n /= 10;
     }
-
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
-    }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
-        }
-        cout << "\n outside while \n";
-    }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
 }
 
+/**
+const int mx_num = 1e6;
+long long dp[mx_num + 1];
+
+
+
+
+long long min_ops_to_zero(int n) {
+    if (n < 0) return INT_MAX;
+    if (n == 0) return 0;
+
+    long long &ans = dp[n];
+    if (dp[n] != -1) return ans;
+
+    ans = INT_MAX;
+
+    get_digits(n);
+    for (int i = 0; i < digits.size(); i++) {
+        if (digits[i] == 0) {
+            continue;
+        }
+        ans = min(ans, min_ops_to_zero(n - digits[i]) + 1);
+    }
+    return ans;
+}
+**/
+// todo: Why doesn't the recursion work ?
+void solve() {
+    ll n; read(n);
+
+    vector<int> dp(n + 1, 1e9);
+    dp[0] = 0;
+    for (int i = 1; i <= n; i++) {
+        get_digits(i);
+        for (auto a : digits) {
+            dp[i] = min(dp[i], dp[i - a] + 1);
+        }
+    }
+    int ans = dp[n];
+    cout << ans << endl;
+}
 int main() {
     int tt = 1;
-    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.

@@ -1,12 +1,13 @@
 /*
-name: D. Permutation Restoration
-group: Codeforces - Educational Codeforces Round 131 (Rated for Div. 2)
-url: https://codeforces.com/contest/1701/problem/D
+name: Book Shop
+group: CSES - CSES Problem Set
+url: https://cses.fi/problemset/task/1158
 interactive: false
-memoryLimit: 256
-timeLimit: 4000
-Started At: 8:54:54 PM
+memoryLimit: 512
+timeLimit: 1000
+Started At: 5:41:36 PM
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -79,49 +80,41 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-void solve() {
-    ll n; read(n);
-    vll B(n); read_array(n, B);
+vll price, pages;
+int rec(int total, int i = 0) {
+    if (i == pages.size()) return 0;
 
-    vpl range(n + 1);
-    for (int i = 1; i <= n; i++) {
-        ll lo = (i) / (B[i - 1] + 1) + 1
-            , hi = B[i - 1] == 0 ? n : (i / B[i - 1]);
-        range[i] = { lo,hi };
+    int ans = 0;
+    if (price[i] <= total) {
+        ans = rec(total - price[i], i + 1) + pages[i];
     }
-
-    priority_queue<pair<pll, ll>, vector<pair<pll, ll>>, greater<>> where;
-    for (int i = 1; i <= n; i++) {
-        where.push(pair(range[i], i));
-    }
-    out(range);
-    vll ans(n);
-    for (int i = 1; i <= n; i++) {
-        while (where.size()) {
-            auto [range, pos] = where.top();
-            out(i, range, pos);
-            if (i >= range.first and i <= range.second) {
-                ans[pos - 1] = i;
-                where.pop();
-                break;
-            }
-            else
-                where.pop();
-        }
-        cout << "\n outside while \n";
-    }
-    for (auto a : ans) {
-        cout << a << " ";
-    }
-    cout << "\n";
+    ans = max(ans, rec(total, i + 1));
+    return ans;
 }
+void solve() {
+    ll n, total; read(n, total);
+    read_array(n, price); read_array(n, pages);
 
+
+    vvl dp(total + 1, vll(2));
+    int prev_state = 0, curr_state = 1;
+
+    for (int j = 1; j <= n; j++) {
+        for (int curr_total = 1; curr_total <= total; curr_total++) {
+            if (curr_total >= price[j - 1]) {
+                dp[curr_total][curr_state] = dp[curr_total - price[j - 1]][prev_state] + pages[j - 1];
+            }
+            dp[curr_total][curr_state] = max(dp[curr_total][curr_state], dp[curr_total][prev_state]);
+        }
+        swap(prev_state, curr_state);
+    }
+    ll ans = max(dp[total][curr_state], dp[total][prev_state]);
+    cout << ans << endl;
+}
 int main() {
     int tt = 1;
-    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }
 }
-
-// practice problems about permutation and arrangement of numbers.
