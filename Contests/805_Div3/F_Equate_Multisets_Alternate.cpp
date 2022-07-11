@@ -82,49 +82,31 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 
 void solve() {
     ll n; read(n);
-    vector<int> A; read_array(n, A);
 
     bool is = true;
+    map<int, int> map_a, map_b;
     for (int i = 0; i < n; i++) {
-        while (A[i] > 0 and A[i] % 2 == 0) A[i] /= 2;
+        int a; cin >> a;
+        while (a and a % 2 == 0) {
+            a /= 2;
+        }
+        map_a[a]++;
     }
-
-    multiset<pair<int, int>> ele;
-
     for (int i = 0; i < n; i++) {
-        int b; read(b);
-        auto temp = b;
-        while (temp) {
-            auto key = pair(temp, b);
-            // pruning all the even values
-            if (temp % 2 == 1)
-                ele.insert(key);
-            temp /= 2;
+        int b; cin >> b;
+        while (b) {
+            if (b % 2)
+                map_b[b]++;
+            b /= 2;
         }
     }
-    // sort(all(A), greater<int>());
-    // this part is necessary, we first have to match the biggest in A[]
 
-    for (int i = 0; i < n; i++) {
-        auto search = pair(A[i], 0);
-        auto get = ele.lower_bound(search);
-        auto [e, init] = *get;
-
-
-        if (get != ele.end() and e == A[i]) {
-            ll ele_in_B = init;
-            while (ele_in_B and ele.size()) {
-                auto to_remove = pair(ele_in_B, init);
-                if (ele_in_B % 2 == 1)
-                    ele.erase(ele.find(to_remove));
-                ele_in_B /= 2;
-            }
-        }
-        else {
-            is = false;
-            break;
+    for (auto e : map_a) {
+        if (map_b[e.first] < e.second) {
+            is = false; break;
         }
     }
+    // don't know why this doesn't work
     cout << (is ? "YES" : "NO") << endl;
 }
 int main() {
