@@ -1,12 +1,3 @@
-/*
-name: F. Equate Multisets
-group: Codeforces - Codeforces Round #805 (Div. 3)
-url: https://codeforces.com/contest/1702/problem/F
-interactive: false
-memoryLimit: 256
-timeLimit: 4000
-Started At: 6:54:31 AM
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -79,35 +70,66 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-/*
-Observation -:
-    unordered multiset might fail where there are lot of duplicate values.
-*/
+struct DSU {
+    long long N;
+    vector<long long> parent;
+    vector<long long> degree;
+    DSU(long long n) {
+        N = n;
+        parent.resize(N);
+        degree.assign(N, 1);
+        iota(parent.begin(), parent.end(), 0);
+    }
+    void merge(long long a, long long b) {
+        // find the root parent
+        // doing pa = parent[a] and pb = parent[b] will give WA because they
+        // (parent[a],parent[b]) are not the root level parents of a and b
+        long long pa = find(a), pb = find(b);
+        if (pa == pb) return;
+
+        if (degree[pb] > degree[pa]) swap(pa, pb);
+        parent[pb] = pa;
+        degree[pa] += degree[pb];
+        degree[pb] = 0;
+    }
+    long long find(long long a) {
+        return (a == parent[a] ? a : parent[a] = find(parent[a]));
+    }
+};
+
+bool check(vpl &arr) {
+    int n = arr.size();
+    map<ll, ll> cnt;
+    for (int i = 0; i < n; i++) {
+        auto [a, b] = arr[i];
+        cnt[a]++; cnt[b]++;
+    }
+    for (auto a : cnt) {
+        if (a.second != 2) {
+            return false;
+        }
+    }
+    return true;
+}
 
 void solve() {
     ll n; read(n);
-    multiset<int> ms;
-
+    DSU dsu(n);
+    vpl arr(n);
     for (int i = 0; i < n; i++) {
-        int a; read(a);
-        while (a and a % 2 == 0) a /= 2;
-        ms.insert(a);
+        ll a, b; read(a, b); a--; b--;
+        arr[i] = pair(a, b);
+        dsu.merge(a, b);
     }
-    bool ans = true;
+    bool is = check(arr);
     for (int i = 0; i < n; i++) {
-        bool is = false;
-        int b; cin >> b;
-        while (b) {
-            if (ms.count(b)) {
-                ms.erase(ms.find(b));
-                is = true;
-                break;
-            }
-            b /= 2;
+        if (dsu.degree[i] % 2) {
+            is = false;
+            break;
         }
-        ans &= is;
     }
-    cout << (ans ? "YES" : "NO") << endl;
+
+    cout << (is ? "YES" : "NO") << endl;
 }
 int main() {
     int tt = 1;

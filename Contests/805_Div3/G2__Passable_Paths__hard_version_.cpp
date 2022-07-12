@@ -1,11 +1,11 @@
 /*
-name: F. Equate Multisets
+name: G2. Passable Paths (hard version)
 group: Codeforces - Codeforces Round #805 (Div. 3)
-url: https://codeforces.com/contest/1702/problem/F
+url: https://codeforces.com/contest/1702/problem/G2
 interactive: false
 memoryLimit: 256
-timeLimit: 4000
-Started At: 6:54:31 AM
+timeLimit: 3000
+Started At: 5:01:30 AM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -79,39 +79,146 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-/*
-Observation -:
-    unordered multiset might fail where there are lot of duplicate values.
-*/
+struct LCA {
+    int LOG;
+    int N;
+    vector<vector<int>> ancestor;
+    vector<int> parent;
+    vector<int> visited;
+    vector<int> depth;
+
+
+    LCA(vector<vector<int>> &graph, int n) {
+        N = n;
+        LOG = __lg(n) + 1;
+        parent.assign(n, 0);
+        depth.assign(n, 0);
+        visited.assign(n, false);
+        ancestor.assign(n, vector<int>(LOG));
+
+        dfs(graph);
+        build();
+    }
+    void dfs(vector<vector<int>> &graph, int node = 0) {
+        if (visited[node]) return;
+        visited[node] = true;
+        for (auto a : graph[node]) {
+            if (visited[a]) continue;
+            depth[a] = depth[node] + 1;
+            parent[a] = node;
+            dfs(graph, a);
+        }
+    }
+    void build() {
+        for (int i = 0; i < N; i++) {
+            ancestor[i][0] = parent[i];
+        }
+        for (int j = 1; j < LOG; j++) {
+            for (int i = 0; i < N; i++) {
+                ancestor[i][j] = ancestor[ancestor[i][j - 1]][j - 1];
+            }
+        }
+    }
+
+
+    int get_lca(int u, int v) {
+        assert(u >= 0 and u < N);
+        assert(v >= 0 and v < N);
+
+        if (depth[u] < depth[v]) {
+            swap(u, v);
+        }
+        int depth_diff = depth[u] - depth[v];
+
+        for (int j = 0; j < LOG; j++) {
+            if (depth_diff & (1LL << j)) {
+                u = ancestor[u][j];
+            }
+        }
+
+        if (u == v) {
+            return u;
+        }
+
+        for (int j = LOG - 1; j >= 0; j--) {
+            if (ancestor[u][j] != ancestor[v][j]) {
+                u = ancestor[u][j];
+                v = ancestor[v][j];
+            }
+        }
+        return ancestor[u][0];
+    }
+
+
+};
+
+void query(LCA &anc) {
+    ll k; read(k);
+    vll vert(k);
+    for (int i = 0; i < k; i++) {
+        ll a; read(a); a--;
+        vert[i] = a;
+    }
+
+    auto dist = [&](int u, int v) {
+        int lca = anc.get_lca(u, v);
+        ll distance = anc.depth[u] + anc.depth[v] - 2 * anc.depth[lca];
+        return distance;
+    };
+
+    int left_end = -1, right_end = -1, max_dep = -1;
+    for (int i = 0; i < vert.size(); i++) {
+        if (anc.depth[vert[i]] > max_dep) {
+            max_dep = anc.depth[vert[i]];
+            left_end = vert[i];
+        }
+    }
+    max_dep = -1;
+    for (int i = 0; i < vert.size(); i++) {
+        if (anc.get_lca(left_end, vert[i]) != vert[i]) {
+            if (max_dep < anc.depth[vert[i]]) {
+                max_dep = anc.depth[vert[i]];
+                right_end = vert[i];
+            }
+        }
+    }
+
+    if (right_end == -1) {
+        cout << "YES" << endl; return;
+    }
+    ll dist_left_right = dist(left_end, right_end);
+    bool is = true;
+    for (int i = 0; i < vert.size(); i++) {
+        ll dist_left_vert = dist(left_end, vert[i]);
+        ll dist_right_vert = dist(right_end, vert[i]);
+        if (dist_left_right != dist_left_vert + dist_right_vert) {
+            is = false;
+            break;
+        }
+    }
+
+    cout << (is ? "YES" : "NO") << endl;
+}
 
 void solve() {
     ll n; read(n);
-    multiset<int> ms;
-
-    for (int i = 0; i < n; i++) {
-        int a; read(a);
-        while (a and a % 2 == 0) a /= 2;
-        ms.insert(a);
+    vector<vector<int>> graph(n, vector<int>());
+    for (int i = 0; i < n - 1; i++) {
+        ll a, b; read(a, b);
+        a--; b--;
+        graph[a].push_back(b);
+        graph[b].push_back(a);
     }
-    bool ans = true;
-    for (int i = 0; i < n; i++) {
-        bool is = false;
-        int b; cin >> b;
-        while (b) {
-            if (ms.count(b)) {
-                ms.erase(ms.find(b));
-                is = true;
-                break;
-            }
-            b /= 2;
-        }
-        ans &= is;
+    LCA anc(graph, n);
+    // out("HERE");
+    ll q; read(q);
+    while (q--) {
+        query(anc);
     }
-    cout << (ans ? "YES" : "NO") << endl;
 }
 int main() {
     int tt = 1;
-    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }

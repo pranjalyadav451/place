@@ -7,6 +7,7 @@ memoryLimit: 256
 timeLimit: 2000
 Started At: 9:53:01 PM
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -49,6 +50,7 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 
 
 
+
 #define all(x)                              (x).begin(),(x).end()
 #define REP(i, a, b)                        for (int i = (a); i <= (b); (i)++)
 #define RREP(i, a, b)                       for (int i = (a); i >= (b); (i)--)
@@ -78,46 +80,7 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-vector<int> visited;
-vll Euler;
-vvl graph;
-
-void eulerTree(int u, int &index) {
-    visited[u] = 1;
-    Euler[index++] = u;
-    for (auto it : graph[u]) {
-        if (!visited[it]) {
-            eulerTree(it, index);
-            Euler[index++] = u;
-        }
-    }
-}
-
-void query() {
-
-}
 void solve() {
-    ll n; read(n);
-
-    graph.assign(n + 1, vll());
-    Euler.assign(2 * n + 1, 0);
-    visited.assign(n + 1, 0);
-
-    for (int i = 0; i < n - 1; i++) {
-        ll a, b; read(a, b);
-        graph[a].push_back(b);
-        graph[a].push_back(a);
-    }
-    out(graph);
-    // ** creating euler tree
-    int index = 0;
-    eulerTree(2, index);
-    out(Euler);
-
-    ll q; read(q);
-    while (q--) {
-        query();
-    }
 
 }
 int main() {

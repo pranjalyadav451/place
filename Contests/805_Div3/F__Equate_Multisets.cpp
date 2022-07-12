@@ -102,8 +102,40 @@ void solve() {
             temp /= 2;
         }
     }
-    // sort(all(A), greater<int>());
+    sort(all(A), greater<int>());
     // this part is necessary, we first have to match the biggest in A[]
+    // because if we do not sort the array A[], we might remove the suitable
+    // candidate for next A[i] 
+    // because it is not guaranteed that removing smaller values of candidates
+    // necessarily leaves cadidates for remaining A[i] undisturbed;
+
+    /***
+     * 6
+        1 2 10 16 64 80
+        20 43 60 74 85 99
+    -> Had we not removed 20 to match with 1, we would have used it to match with 5.
+    Dry Run
+    [ i : 0, A[i] : 1 ]
+    [ e : 1, init : 20 ]
+
+    [ i : 1, A[i] : 1 ]
+    [ e : 1, init : 43 ]
+
+    [ i : 2, A[i] : 5 ]
+    [ e : 5, init : 85 ]
+
+    [ i : 3, A[i] : 1 ]
+    [ e : 1, init : 60 ]
+
+    [ i : 4, A[i] : 1 ]
+    [ e : 1, init : 74 ]
+
+    [ i : 5, A[i] : 5 ]
+    [ e : 49, init : 99 ]
+
+    NO
+
+    */
 
     for (int i = 0; i < n; i++) {
         auto search = pair(A[i], 0);
