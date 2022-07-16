@@ -1,11 +1,11 @@
 /*
-name: Array Description
+name: Two Sets II
 group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1746
+url: https://cses.fi/problemset/task/1093/
 interactive: false
 memoryLimit: 512
 timeLimit: 1000
-Started At: 9:27:03 AM
+Started At: 10:58:24 AM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -56,74 +56,57 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template<typename T> void read_array(ll n, vector<T> &arr) {
+template<typename T> void in_arr(ll n, vector<T> &arr) {
     if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
-template<typename... Args> void read(Args&... args) {
+template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
 vector<string >process(string &str) {
     vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
         if (str[i] == '|') {
-            res.push_back(temp); temp = ""; i++;
+            res.push_back(temp); temp = "";
         }
         else temp.push_back(str[i]);
     } res.push_back(temp); return res;
 }
 template<typename ...Args> void logger(string vars, Args&&... values) {
-    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
+    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "|")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
         cout << delim << labels[i] << arrow << content[i]; delim = ", ";
     } cout << " ]" << endl;
 }
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
+vvl dp;
 const ll mod = 1e9 + 7;
-const ll minf = -1e18;
 
-const ll mxs = 1e5;
-const ll mxm = 1e2;
-ll M = -1;
-int dp[mxs + 1][mxm + 1];
+ll rec(ll n, ll curr, ll i = 0) {
+    if (curr < 0 or i == n) return 0;
+    if (curr == 0) return 1;
 
-ll rec(vll &arr, ll prev, int i = 1) {
-    if (i == arr.size()) return 1;
-
-    int &ans = dp[i][prev];
+    ll &ans = dp[i][curr];
     if (ans != -1) return ans;
-    ans = 0;
 
-    // out(ans);
-
-    if (arr[i] != 0) {
-        if (abs(arr[i] - prev) > 1) return 0;
-        return ans = rec(arr, arr[i], i + 1) % mod;
-    }
-
-    for (ll j = max(prev - 1, 1LL); j <= min(prev + 1, M); j++) {
-        ans = (ans + rec(arr, j, i + 1) % mod) % mod;
-    }
+    ans = (rec(n, curr - (i + 1), i + 1) % mod + rec(n, curr, i + 1) % mod) % mod;
     return ans;
 }
 
 void solve() {
-    ll n; read(n, M);
-    vll arr(n); read_array(n, arr);
+    ll n; in(n);
 
-    memset(dp, -1, sizeof dp);
-
-    ll ans = 0;
-    if (arr[0] == 0) {
-        for (int i = 0; i < M; i++) {
-            ans = (ans + rec(arr, i + 1, 1) % mod) % mod;
-        }
+    out(n, n);
+    ll total = (n * (n + 1)) / 2;
+    if (total & 1) {
+        cout << 0 << endl;
     }
     else {
-        ans = rec(arr, arr[0], 1);
+        ll req = total / 2;
+        dp.assign(n + 1, vll(req + 1, -1));
+        ll ans = rec(n, req);
+        cout << ans << endl;
     }
-    // out(dp);
-    cout << ans << endl;
 }
 int main() {
     int tt = 1;

@@ -1,12 +1,13 @@
 /*
-name: Array Description
+name: Increasing Subsequence
 group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1746
+url: https://cses.fi/problemset/task/1145/
 interactive: false
 memoryLimit: 512
 timeLimit: 1000
-Started At: 9:27:03 AM
+Started At: 11:14:59 PM
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -56,10 +57,10 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template<typename T> void read_array(ll n, vector<T> &arr) {
+template<typename T> void in_arr(ll n, vector<T> &arr) {
     if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
-template<typename... Args> void read(Args&... args) {
+template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
@@ -79,50 +80,51 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-const ll mod = 1e9 + 7;
-const ll minf = -1e18;
+void insert_candi(map<ll, ll> &can, ll value, ll advantage) {
+    // if any smaller value with same or bigger advantage exists we don't need to 
+    // insert the current value
 
-const ll mxs = 1e5;
-const ll mxm = 1e2;
-ll M = -1;
-int dp[mxs + 1][mxm + 1];
-
-ll rec(vll &arr, ll prev, int i = 1) {
-    if (i == arr.size()) return 1;
-
-    int &ans = dp[i][prev];
-    if (ans != -1) return ans;
-    ans = 0;
-
-    // out(ans);
-
-    if (arr[i] != 0) {
-        if (abs(arr[i] - prev) > 1) return 0;
-        return ans = rec(arr, arr[i], i + 1) % mod;
+    auto start = can.lower_bound(value);
+    if (start != can.begin() and (--start)->second >= advantage) {
+        return;
     }
 
-    for (ll j = max(prev - 1, 1LL); j <= min(prev + 1, M); j++) {
-        ans = (ans + rec(arr, j, i + 1) % mod) % mod;
+    start = can.lower_bound(value);
+
+    // start at lower bound
+    while (start != can.end() and start->second <= advantage) {
+        auto temp = start;
+        start++;
+        can.erase(temp);
     }
-    return ans;
+    can[value] = advantage;
+}
+ll get_best_candi(map<ll, ll> &can, ll value) {
+    auto get = can.lower_bound(value);
+    if (get == can.begin()) return 0;
+    --get;
+    return get->second;
+}
+
+ll get_lcs(vll &arr, int n) {
+    vll dp(n);
+    map<ll, ll> can;
+    dp[0] = 1;
+    can[arr[0]] = dp[0];
+
+    for (int i = 1; i < n; i++) {
+        dp[i] = get_best_candi(can, arr[i]) + 1;
+        insert_candi(can, arr[i], dp[i]);
+    }
+    return *max_element(all(dp));
 }
 
 void solve() {
-    ll n; read(n, M);
-    vll arr(n); read_array(n, arr);
+    ll n; in(n);
+    vll arr; in_arr(n, arr);
 
-    memset(dp, -1, sizeof dp);
-
-    ll ans = 0;
-    if (arr[0] == 0) {
-        for (int i = 0; i < M; i++) {
-            ans = (ans + rec(arr, i + 1, 1) % mod) % mod;
-        }
-    }
-    else {
-        ans = rec(arr, arr[0], 1);
-    }
-    // out(dp);
+    // finding longest increasing subsequence in O(n*log(n))
+    ll ans = get_lcs(arr, n);
     cout << ans << endl;
 }
 int main() {

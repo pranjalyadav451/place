@@ -1,11 +1,11 @@
 /*
-name: Array Description
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1746
+name: F. Yet Another Problem About Pairs Satisfying an Inequality
+group: Codeforces - Codeforces Round #806 (Div. 4)
+url: https://codeforces.com/contest/1703/problem/F
 interactive: false
-memoryLimit: 512
-timeLimit: 1000
-Started At: 9:27:03 AM
+memoryLimit: 256
+timeLimit: 2000
+Started At: 9:34:39 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -79,55 +79,28 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-const ll mod = 1e9 + 7;
-const ll minf = -1e18;
-
-const ll mxs = 1e5;
-const ll mxm = 1e2;
-ll M = -1;
-int dp[mxs + 1][mxm + 1];
-
-ll rec(vll &arr, ll prev, int i = 1) {
-    if (i == arr.size()) return 1;
-
-    int &ans = dp[i][prev];
-    if (ans != -1) return ans;
-    ans = 0;
-
-    // out(ans);
-
-    if (arr[i] != 0) {
-        if (abs(arr[i] - prev) > 1) return 0;
-        return ans = rec(arr, arr[i], i + 1) % mod;
-    }
-
-    for (ll j = max(prev - 1, 1LL); j <= min(prev + 1, M); j++) {
-        ans = (ans + rec(arr, j, i + 1) % mod) % mod;
-    }
-    return ans;
-}
-
 void solve() {
-    ll n; read(n, M);
+    ll n; read(n);
     vll arr(n); read_array(n, arr);
-
-    memset(dp, -1, sizeof dp);
+    set<pll> candi;
+    oset other;
 
     ll ans = 0;
-    if (arr[0] == 0) {
-        for (int i = 0; i < M; i++) {
-            ans = (ans + rec(arr, i + 1, 1) % mod) % mod;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] < i + 1) {
+            candi.insert({ arr[i],i + 1 });
+            other.insert(i + 1);
         }
     }
-    else {
-        ans = rec(arr, arr[0], 1);
+    for (auto [ele, idx] : candi) {
+        ll get = other.order_of_key(ele);
+        ans += get;
     }
-    // out(dp);
     cout << ans << endl;
 }
 int main() {
     int tt = 1;
-    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }

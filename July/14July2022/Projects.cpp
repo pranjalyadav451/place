@@ -1,11 +1,11 @@
 /*
-name: Array Description
+name: Projects
 group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1746
+url: https://cses.fi/problemset/task/1140
 interactive: false
 memoryLimit: 512
 timeLimit: 1000
-Started At: 9:27:03 AM
+Started At: 12:10:11 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -56,78 +56,75 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template<typename T> void read_array(ll n, vector<T> &arr) {
+template<typename T> void in_arr(ll n, vector<T> &arr) {
     if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
-template<typename... Args> void read(Args&... args) {
+template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
 vector<string >process(string &str) {
     vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
         if (str[i] == '|') {
-            res.push_back(temp); temp = ""; i++;
+            res.push_back(temp); temp = "";
         }
         else temp.push_back(str[i]);
     } res.push_back(temp); return res;
 }
 template<typename ...Args> void logger(string vars, Args&&... values) {
-    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
+    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "|")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
         cout << delim << labels[i] << arrow << content[i]; delim = ", ";
     } cout << " ]" << endl;
 }
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-const ll mod = 1e9 + 7;
-const ll minf = -1e18;
-
-const ll mxs = 1e5;
-const ll mxm = 1e2;
-ll M = -1;
-int dp[mxs + 1][mxm + 1];
-
-ll rec(vll &arr, ll prev, int i = 1) {
-    if (i == arr.size()) return 1;
-
-    int &ans = dp[i][prev];
-    if (ans != -1) return ans;
-    ans = 0;
-
-    // out(ans);
-
-    if (arr[i] != 0) {
-        if (abs(arr[i] - prev) > 1) return 0;
-        return ans = rec(arr, arr[i], i + 1) % mod;
-    }
-
-    for (ll j = max(prev - 1, 1LL); j <= min(prev + 1, M); j++) {
-        ans = (ans + rec(arr, j, i + 1) % mod) % mod;
+struct Project {
+    ll start, end, reward;
+    Project(ll s, ll e, ll r) :start(s), end(e), reward(r) {}
+};
+ll bin(vector<Project> &arr, int n, int val) {
+    int left = 0, right = n - 1, ans = -1, mid = -1;
+    while (left <= right) {
+        mid = left + (right - left) / 2;
+        if (arr[mid].end >= val) {
+            right = mid - 1;
+        }
+        else {
+            ans = mid;
+            left = mid + 1;
+        }
     }
     return ans;
 }
 
 void solve() {
-    ll n; read(n, M);
-    vll arr(n); read_array(n, arr);
-
-    memset(dp, -1, sizeof dp);
-
-    ll ans = 0;
-    if (arr[0] == 0) {
-        for (int i = 0; i < M; i++) {
-            ans = (ans + rec(arr, i + 1, 1) % mod) % mod;
-        }
+    ll n; in(n);
+    vector<Project> arr;
+    for (int i = 0; i < n; i++) {
+        ll a, b, c; in(a, b, c);
+        arr.push_back(Project(a, b, c));
     }
-    else {
-        ans = rec(arr, arr[0], 1);
+    auto comp = [](const Project &a, const Project &b) {return a.end == b.end ? a.start < b.start : a.end < b.end; };
+    sort(all(arr), comp);
+
+    vll dp(n + 1);
+
+    // for (int i = 0; i < n; i++) {
+    //     auto p = arr[i];
+    //     out(p.start, p.end, p.reward);
+    // }
+
+    for (int i = 1; i <= n; i++) {
+        ll just_smaller = bin(arr, n, arr[i - 1].start);
+        dp[i] = dp[just_smaller + 1] + arr[i - 1].reward;
+        dp[i] = max(dp[i], dp[i - 1]);
     }
-    // out(dp);
+    ll ans = dp[n];
     cout << ans << endl;
 }
 int main() {
     int tt = 1;
-    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }

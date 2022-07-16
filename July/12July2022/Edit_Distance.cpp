@@ -1,11 +1,11 @@
 /*
-name: Array Description
+name: Edit Distance
 group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1746
+url: https://cses.fi/problemset/task/1639
 interactive: false
 memoryLimit: 512
 timeLimit: 1000
-Started At: 9:27:03 AM
+Started At: 11:02:16 AM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -78,51 +78,33 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 }
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
+const int inf = 1e9;
+int dp[5001][5001];
 
-const ll mod = 1e9 + 7;
-const ll minf = -1e18;
+int rec(string &A, string &B, int i = 0, int j = 0) {
+    if (i == A.size() or j == B.size()) {
+        return (i == A.size()) and (j == B.size()) ? 0 : max(A.size() - i, B.size() - j);
+    }
 
-const ll mxs = 1e5;
-const ll mxm = 1e2;
-ll M = -1;
-int dp[mxs + 1][mxm + 1];
-
-ll rec(vll &arr, ll prev, int i = 1) {
-    if (i == arr.size()) return 1;
-
-    int &ans = dp[i][prev];
+    int &ans = dp[i][j];
     if (ans != -1) return ans;
-    ans = 0;
+    ans = inf;
+    // int ans = 0;
 
-    // out(ans);
-
-    if (arr[i] != 0) {
-        if (abs(arr[i] - prev) > 1) return 0;
-        return ans = rec(arr, arr[i], i + 1) % mod;
+    if (A[i] != B[j]) {
+        return ans = min({ rec(A, B, i + 1, j),
+            rec(A, B, i, j + 1),
+            rec(A, B, i + 1, j + 1) }) + 1;
     }
-
-    for (ll j = max(prev - 1, 1LL); j <= min(prev + 1, M); j++) {
-        ans = (ans + rec(arr, j, i + 1) % mod) % mod;
-    }
-    return ans;
+    else
+        return ans = rec(A, B, i + 1, j + 1);
 }
 
 void solve() {
-    ll n; read(n, M);
-    vll arr(n); read_array(n, arr);
-
-    memset(dp, -1, sizeof dp);
-
-    ll ans = 0;
-    if (arr[0] == 0) {
-        for (int i = 0; i < M; i++) {
-            ans = (ans + rec(arr, i + 1, 1) % mod) % mod;
-        }
-    }
-    else {
-        ans = rec(arr, arr[0], 1);
-    }
-    // out(dp);
+    string A, B; read(A, B);
+    int N = A.size(), M = B.size();
+    memset(dp, -1, sizeof(dp));
+    int ans = rec(A, B);
     cout << ans << endl;
 }
 int main() {

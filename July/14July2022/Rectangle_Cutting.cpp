@@ -1,11 +1,11 @@
 /*
-name: Array Description
+name: Rectangle Cutting
 group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1746
+url: https://cses.fi/problemset/task/1744/
 interactive: false
 memoryLimit: 512
 timeLimit: 1000
-Started At: 9:27:03 AM
+Started At: 10:09:32 AM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -56,10 +56,10 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template<typename T> void read_array(ll n, vector<T> &arr) {
+template<typename T> void in_arr(ll n, vector<T> &arr) {
     if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
-template<typename... Args> void read(Args&... args) {
+template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
@@ -79,50 +79,44 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-const ll mod = 1e9 + 7;
-const ll minf = -1e18;
+/*
+    Why is this Wrong?
 
-const ll mxs = 1e5;
-const ll mxm = 1e2;
-ll M = -1;
-int dp[mxs + 1][mxm + 1];
-
-ll rec(vll &arr, ll prev, int i = 1) {
-    if (i == arr.size()) return 1;
-
-    int &ans = dp[i][prev];
-    if (ans != -1) return ans;
-    ans = 0;
-
-    // out(ans);
-
-    if (arr[i] != 0) {
-        if (abs(arr[i] - prev) > 1) return 0;
-        return ans = rec(arr, arr[i], i + 1) % mod;
+    if (W > L) swap(L, W);
+    ll moves = 0;
+    while (L != 0 and W != 0 and L != W) {
+        moves += L / W + (L % W == 0 ? -1 : 0);
+        L = L % W;
+        swap(L, W);
     }
+    cout << moves << endl;
+*/
 
-    for (ll j = max(prev - 1, 1LL); j <= min(prev + 1, M); j++) {
-        ans = (ans + rec(arr, j, i + 1) % mod) % mod;
+const ll INF = 5e18;
+vvl dp;
+
+ll rec(ll length, ll width) {
+    if (length == width) return 0;
+    ll &ans = dp[length][width];
+    if (ans != -1) return ans;
+    ans = INF;
+
+    for (int i = 1; i <= width / 2; i++) {
+        ans = min(ans, rec(length, width - i) + 1 + rec(length, i));
+    }
+    for (int i = 1; i <= length / 2; i++) {
+        ans = min(ans, rec(length - i, width) + 1 + rec(i, width));
     }
     return ans;
 }
 
+
+
 void solve() {
-    ll n; read(n, M);
-    vll arr(n); read_array(n, arr);
-
-    memset(dp, -1, sizeof dp);
-
-    ll ans = 0;
-    if (arr[0] == 0) {
-        for (int i = 0; i < M; i++) {
-            ans = (ans + rec(arr, i + 1, 1) % mod) % mod;
-        }
-    }
-    else {
-        ans = rec(arr, arr[0], 1);
-    }
-    // out(dp);
+    ll L, W; in(L, W);
+    if (L < W) swap(L, W);
+    dp.assign(L + 1, vll(W + 1, -1));
+    ll ans = rec(L, W);
     cout << ans << endl;
 }
 int main() {

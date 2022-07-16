@@ -1,11 +1,11 @@
 /*
-name: Array Description
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1746
+name: E. Mirror Grid
+group: Codeforces - Codeforces Round #806 (Div. 4)
+url: https://codeforces.com/contest/1703/problem/E
 interactive: false
-memoryLimit: 512
-timeLimit: 1000
-Started At: 9:27:03 AM
+memoryLimit: 256
+timeLimit: 2000
+Started At: 8:50:24 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -79,55 +79,47 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-const ll mod = 1e9 + 7;
-const ll minf = -1e18;
-
-const ll mxs = 1e5;
-const ll mxm = 1e2;
-ll M = -1;
-int dp[mxs + 1][mxm + 1];
-
-ll rec(vll &arr, ll prev, int i = 1) {
-    if (i == arr.size()) return 1;
-
-    int &ans = dp[i][prev];
-    if (ans != -1) return ans;
-    ans = 0;
-
-    // out(ans);
-
-    if (arr[i] != 0) {
-        if (abs(arr[i] - prev) > 1) return 0;
-        return ans = rec(arr, arr[i], i + 1) % mod;
-    }
-
-    for (ll j = max(prev - 1, 1LL); j <= min(prev + 1, M); j++) {
-        ans = (ans + rec(arr, j, i + 1) % mod) % mod;
-    }
-    return ans;
+void get_next(int &i, int &j, int n) {
+    assert(i >= 0 and i < n &&j >= 0 and j <= n);
+    swap(i, j); j = n - j - 1;
 }
 
 void solve() {
-    ll n; read(n, M);
-    vll arr(n); read_array(n, arr);
+    ll n; read(n);
+    vector<string> arr(n);
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
 
-    memset(dp, -1, sizeof dp);
+    int i = 0, j = 0;
+    ll moves = 0;
 
-    ll ans = 0;
-    if (arr[0] == 0) {
-        for (int i = 0; i < M; i++) {
-            ans = (ans + rec(arr, i + 1, 1) % mod) % mod;
+    for (int k = i; k < n - i - 1; k++) {
+        for (int m = i; m < n - i; m++) {
+            map<char, int> freq;
+            int x = k, y = m;
+            int cnt = 0;
+            while (cnt < 4) {
+                // out(x, y);
+                freq[arr[x][y]]++;
+                arr[x][y] = '0';
+                get_next(x, y, n);
+                cnt++;
+            }
+            // // out(k, m);
+            // out(freq);
+            // cout << endl;
+            moves += min(freq['0'], freq['1']);
+
         }
+        // cout << endl;
+        i++;
     }
-    else {
-        ans = rec(arr, arr[0], 1);
-    }
-    // out(dp);
-    cout << ans << endl;
+    cout << moves << endl;
 }
 int main() {
     int tt = 1;
-    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }

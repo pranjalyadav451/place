@@ -1,12 +1,13 @@
 /*
-name: Array Description
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1746
+name: G. Good Key, Bad Key
+group: Codeforces - Codeforces Round #806 (Div. 4)
+url: https://codeforces.com/contest/1703/problem/G
 interactive: false
-memoryLimit: 512
-timeLimit: 1000
-Started At: 9:27:03 AM
+memoryLimit: 256
+timeLimit: 3000
+Started At: 10:35:23 PM
 */
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -79,55 +80,48 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-const ll mod = 1e9 + 7;
-const ll minf = -1e18;
 
-const ll mxs = 1e5;
-const ll mxm = 1e2;
-ll M = -1;
-int dp[mxs + 1][mxm + 1];
+ll costK;
+const ll minf = -5e18;
+ll get2(ll b) {
+    ll res = 1;
+    ll a = 2;
+    while (b) {
+        if (b & 1) res = res * a;
+        a = a * a;
+        b /= 2;
+    }
+    return res;
+}
+ll rec(vll &arr, vvl &dp, ll i = 0, ll j = 0) {
+    // missed just this one line.
+    // alway take care of overflows
+    if (j == 30) return 0;
+    if (i == arr.size()) return 0;
 
-ll rec(vll &arr, ll prev, int i = 1) {
-    if (i == arr.size()) return 1;
-
-    int &ans = dp[i][prev];
-    if (ans != -1) return ans;
+    ll &ans = dp[i][j];
+    if (ans != minf) return ans;
     ans = 0;
 
-    // out(ans);
 
-    if (arr[i] != 0) {
-        if (abs(arr[i] - prev) > 1) return 0;
-        return ans = rec(arr, arr[i], i + 1) % mod;
-    }
-
-    for (ll j = max(prev - 1, 1LL); j <= min(prev + 1, M); j++) {
-        ans = (ans + rec(arr, j, i + 1) % mod) % mod;
-    }
+    ans = rec(arr, dp, i + 1, j + 1) + arr[i] / get2(j + 1);
+    ans = max(ans, rec(arr, dp, i + 1, j) + arr[i] / get2(j) - costK);
     return ans;
 }
 
 void solve() {
-    ll n; read(n, M);
+    ll n; read(n, costK);
     vll arr(n); read_array(n, arr);
 
-    memset(dp, -1, sizeof dp);
+    const int LOG = 31;
+    vvl dp(n + 1, vll(LOG + 1, minf));
 
-    ll ans = 0;
-    if (arr[0] == 0) {
-        for (int i = 0; i < M; i++) {
-            ans = (ans + rec(arr, i + 1, 1) % mod) % mod;
-        }
-    }
-    else {
-        ans = rec(arr, arr[0], 1);
-    }
-    // out(dp);
+    ll ans = rec(arr, dp);
     cout << ans << endl;
 }
 int main() {
     int tt = 1;
-    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
+    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }

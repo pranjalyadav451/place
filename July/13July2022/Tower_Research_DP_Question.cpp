@@ -1,12 +1,3 @@
-/*
-name: Array Description
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1746
-interactive: false
-memoryLimit: 512
-timeLimit: 1000
-Started At: 9:27:03 AM
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -79,51 +70,16 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-const ll mod = 1e9 + 7;
-const ll minf = -1e18;
-
-const ll mxs = 1e5;
-const ll mxm = 1e2;
-ll M = -1;
-int dp[mxs + 1][mxm + 1];
-
-ll rec(vll &arr, ll prev, int i = 1) {
-    if (i == arr.size()) return 1;
-
-    int &ans = dp[i][prev];
-    if (ans != -1) return ans;
-    ans = 0;
-
-    // out(ans);
-
-    if (arr[i] != 0) {
-        if (abs(arr[i] - prev) > 1) return 0;
-        return ans = rec(arr, arr[i], i + 1) % mod;
-    }
-
-    for (ll j = max(prev - 1, 1LL); j <= min(prev + 1, M); j++) {
-        ans = (ans + rec(arr, j, i + 1) % mod) % mod;
-    }
-    return ans;
-}
-
 void solve() {
-    ll n; read(n, M);
-    vll arr(n); read_array(n, arr);
+    ll n, lo, hi; read(n, lo, hi);
+    /*
+    [{x},....remaining range.....]
+    x -> odd , then remaining -> odd,
+    x -> even, then remaining -> even
+    x and remaining range should have the same parity.
+    */
 
-    memset(dp, -1, sizeof dp);
 
-    ll ans = 0;
-    if (arr[0] == 0) {
-        for (int i = 0; i < M; i++) {
-            ans = (ans + rec(arr, i + 1, 1) % mod) % mod;
-        }
-    }
-    else {
-        ans = rec(arr, arr[0], 1);
-    }
-    // out(dp);
-    cout << ans << endl;
 }
 int main() {
     int tt = 1;
