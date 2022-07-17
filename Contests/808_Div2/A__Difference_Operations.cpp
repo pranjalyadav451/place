@@ -1,11 +1,11 @@
 /*
-name: Projects
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1140
+name: A. Difference Operations
+group: Codeforces - Codeforces Round #808 (Div. 2)
+url: https://codeforces.com/contest/1708/problem/0
 interactive: false
-memoryLimit: 512
+memoryLimit: 256
 timeLimit: 1000
-Started At: 12:10:11 PM
+Started At: 8:15:13 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -57,15 +57,14 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
 template<typename T> void in_arr(ll n, vector<T> &arr) {
-    if (arr.size() != n) arr.resize(n);
-    for (int i = 0; i < n; i++) cin >> arr[i];
+    if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
 template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
 vector<string >process(string &str) {
-    vector<string> res; string temp = ""; for (size_t i = 0; i < str.size(); i++) {
+    vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
         if (str[i] == '|') {
             res.push_back(temp); temp = "";
         }
@@ -80,48 +79,26 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-struct Project {
-    ll start, end, reward;
-    Project(ll s, ll e, ll r) :start(s), end(e), reward(r) {}
-};
-
-ll bin(vector<Project> &arr, int n, int val) {
-    int left = 0, right = n - 1, ans = -1, mid = -1;
-    while (left <= right) {
-        mid = left + (right - left) / 2;
-        if (arr[mid].end >= val) {
-            right = mid - 1;
-        }
-        else {
-            ans = mid;
-            left = mid + 1;
-        }
-    }
-    return ans;
-}
-
 void solve() {
     ll n; in(n);
-    vector<Project> arr;
-    for (int i = 0; i < n; i++) {
-        ll a, b, c; in(a, b, c);
-        arr.push_back(Project(a, b, c));
+    vll arr(n); in_arr(n, arr);
+    vll diff;
+    for (int i = 1; i < n; i++) {
+        ll d = arr[i] - arr[i - 1];
+        diff.push_back(d);
     }
-    auto comp = [](const Project &a, const Project &b) {return a.end == b.end ? a.start < b.start : a.end < b.end; };
-    sort(all(arr), comp);
-
-    vll dp(n + 1);
-
-    for (int i = 1; i <= n; i++) {
-        ll just_smaller = bin(arr, n, arr[i - 1].start);
-        dp[i] = dp[just_smaller + 1] + arr[i - 1].reward;
-        dp[i] = max(dp[i], dp[i - 1]);
+    bool is = true;
+    for (auto a : diff) {
+        if (a % arr[0]) {
+            is = false;
+            break;
+        }
     }
-    ll ans = dp[n];
-    cout << ans << endl;
+    cout << (is ? "YES" : "NO") << endl;
 }
 int main() {
     int tt = 1;
+    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }
