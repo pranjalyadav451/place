@@ -1,12 +1,3 @@
-/*
-name: Coin Combinations II
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1636
-interactive: false
-memoryLimit: 512
-timeLimit: 1000
-Started At: 10:26:27 AM
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -56,68 +47,105 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template<typename T> void read_array(ll n, vector<T> &arr) {
+template<typename T> void in_arr(ll n, vector<T> &arr) {
     if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
-template<typename... Args> void read(Args&... args) {
+template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
 vector<string >process(string &str) {
     vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
         if (str[i] == '|') {
-            res.push_back(temp); temp = ""; i++;
+            res.push_back(temp); temp = "";
         }
         else temp.push_back(str[i]);
     } res.push_back(temp); return res;
 }
 template<typename ...Args> void logger(string vars, Args&&... values) {
-    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
+    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "|")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
         cout << delim << labels[i] << arrow << content[i]; delim = ", ";
     } cout << " ]" << endl;
 }
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+ // Definition for binary tree
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+
+};
+
+typedef vector<TreeNode *> vt;
+
+vector<TreeNode *> rec(int start, int end) {
+    vt ans;
+    if (start > end) {
+        ans.push_back(nullptr);
+        return ans;
+    };
+
+    for (int i = start; i <= end; i++) {
+        // out(start, end);
+        vt left = rec(start, i - 1);
+        vt right = rec(i + 1, end);
 
 
-// ** not the correct intuition and approach to the problem
 
-// int rec(vll &coins, int total, int i = 0) {
-//     if (total == 0) return 1;
-//     if (i == coins.size()) return 0;
-
-//     int &ans = dp[total][i];
-//     if (ans != -1) return ans;
-//     ans = 0;
-//     if (total >= coins[i]) ans += rec(coins, total - coins[i], i);
-//     ans += rec(coins, total, i + 1);
-//     return ans;
-// }
-
-const int mod = 1e9 + 7;
-const int mx = 1e6;
-
-void solve() {
-    ll n, total;
-    read(n, total);
-    vector<int> coins(n); read_array(n, coins);
-
-    ll dp[total + 1] = { 0 };
-    dp[0] = 1;
-    for (int i = 1; i <= n; i++) {
-        for (int weight = 0; weight <= total; weight++) {
-            if (weight - coins[i - 1] >= 0) {  // prevent out of bounds cases
-                dp[weight] += dp[weight - coins[i - 1]];
-                dp[weight] %= mod;
+        int n = left.size(), m = right.size();
+        for (int j = 0; j < n; j++) {
+            TreeNode *head = new TreeNode(i);
+            head->left = left[j];
+            for (int k = 0; k < m; k++) {
+                head->right = right[k];
+            }
+            ans.push_back(head);
+        }
+        if (n == 0 and m == 0) ans.push_back(new TreeNode(i));
+        else if (n == 0) {
+            for (int j = 0; j < m; j++) {
+                TreeNode *head = new TreeNode(i);
+                head->right = right[j];
+                ans.push_back(head);
             }
         }
     }
-    int ans = dp[total];
-    cout << ans << endl;
+
+
+    return ans;
+}
+
+vector<TreeNode *> generateTrees(int A) {
+    vt ans = rec(1, A);
+
+    return ans;
+}
+
+void post(TreeNode *current) {
+    if (current == NULL) return;
+    post(current->left);
+    post(current->right);
+    cout << current->val << " ";
 }
 int main() {
-    int tt = 1;
-    while (tt--) {
-        solve();
+    int a; cin >> a;
+    vector<TreeNode *> ans = generateTrees(a);
+
+    for (auto node : ans) {
+        post(node);
+        cout << endl;
     }
 }
+

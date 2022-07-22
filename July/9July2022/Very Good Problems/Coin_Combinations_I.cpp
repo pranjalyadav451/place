@@ -105,7 +105,8 @@ void solve() {
     dp[0] = 1;
     for (int weight = 0; weight <= total; weight++) {
         for (int i = 1; i <= n; i++) {
-            if (weight - coins[i - 1] >= 0) {  // prevent out of bounds cases
+            if (weight - coins[i - 1] >= 0) {
+                // prevent out of bounds cases
                 dp[weight] += dp[weight - coins[i - 1]];
                 dp[weight] %= mod;
             }

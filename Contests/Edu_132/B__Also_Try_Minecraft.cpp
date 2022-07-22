@@ -1,13 +1,12 @@
 /*
-name: Coin Combinations II
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1636
+name: B. Also Try Minecraft
+group: Codeforces - Educational Codeforces Round 132 (Rated for Div. 2)
+url: https://codeforces.com/contest/1709/problem/B
 interactive: false
-memoryLimit: 512
-timeLimit: 1000
-Started At: 10:26:27 AM
-*/
-#include <bits/stdc++.h>
+memoryLimit: 256
+timeLimit: 2000
+Started At: 8:13:48 PM
+*/#include <bits/stdc++.h>
 using namespace std;
 
 #include <ext/pb_ds/assoc_container.hpp>
@@ -56,67 +55,71 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template<typename T> void read_array(ll n, vector<T> &arr) {
+template<typename T> void in_arr(ll n, vector<T> &arr) {
     if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
-template<typename... Args> void read(Args&... args) {
+template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
 vector<string >process(string &str) {
     vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
         if (str[i] == '|') {
-            res.push_back(temp); temp = ""; i++;
+            res.push_back(temp); temp = "";
         }
         else temp.push_back(str[i]);
     } res.push_back(temp); return res;
 }
 template<typename ...Args> void logger(string vars, Args&&... values) {
-    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
+    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "|")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
         cout << delim << labels[i] << arrow << content[i]; delim = ", ";
     } cout << " ]" << endl;
 }
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-
-// ** not the correct intuition and approach to the problem
-
-// int rec(vll &coins, int total, int i = 0) {
-//     if (total == 0) return 1;
-//     if (i == coins.size()) return 0;
-
-//     int &ans = dp[total][i];
-//     if (ans != -1) return ans;
-//     ans = 0;
-//     if (total >= coins[i]) ans += rec(coins, total - coins[i], i);
-//     ans += rec(coins, total, i + 1);
-//     return ans;
-// }
-
-const int mod = 1e9 + 7;
-const int mx = 1e6;
-
 void solve() {
-    ll n, total;
-    read(n, total);
-    vector<int> coins(n); read_array(n, coins);
+    ll n, m; in(n, m);
+    vll H; in_arr(n, H);
 
-    ll dp[total + 1] = { 0 };
-    dp[0] = 1;
-    for (int i = 1; i <= n; i++) {
-        for (int weight = 0; weight <= total; weight++) {
-            if (weight - coins[i - 1] >= 0) {  // prevent out of bounds cases
-                dp[weight] += dp[weight - coins[i - 1]];
-                dp[weight] %= mod;
-            }
-        }
+
+    vll pref(n), suff(n);
+    for (int i = 1; i < n; i++) {
+        ll diff = H[i - 1] - H[i];
+        pref[i] += pref[i - 1] + (diff > 0 ? diff : 0);
     }
-    int ans = dp[total];
-    cout << ans << endl;
+    for (int i = n - 2; i >= 0; i--) {
+        ll diff = H[i + 1] - H[i];
+        suff[i] += suff[i + 1] + (diff > 0 ? diff : 0);
+    }
+
+    while (m--) {
+        ll start, end;
+        in(start, end);
+        start--, end--;
+        ll ans = 0;
+        if (start == end) {
+            cout << 0 << endl;
+            continue;
+        }
+        if (start < end) {
+            ll sub = start - 1 >= 0 ? pref[start - 1] : 0;
+            ans = pref[end] - pref[start];
+        }
+        else {
+            ll sub = start + 1 < n ? suff[start + 1] : 0;
+            ans = suff[end] - suff[start];
+        }
+        cout << ans << endl;
+    }
+
+
+
+
 }
 int main() {
     int tt = 1;
+    // cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }

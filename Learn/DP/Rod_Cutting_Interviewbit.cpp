@@ -1,12 +1,3 @@
-/*
-name: Coin Combinations II
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1636
-interactive: false
-memoryLimit: 512
-timeLimit: 1000
-Started At: 10:26:27 AM
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -56,23 +47,23 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template<typename T> void read_array(ll n, vector<T> &arr) {
+template<typename T> void in_arr(ll n, vector<T> &arr) {
     if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
-template<typename... Args> void read(Args&... args) {
+template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
 vector<string >process(string &str) {
     vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
         if (str[i] == '|') {
-            res.push_back(temp); temp = ""; i++;
+            res.push_back(temp); temp = "";
         }
         else temp.push_back(str[i]);
     } res.push_back(temp); return res;
 }
 template<typename ...Args> void logger(string vars, Args&&... values) {
-    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
+    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "|")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
         cout << delim << labels[i] << arrow << content[i]; delim = ", ";
     } cout << " ]" << endl;
 }
@@ -80,40 +71,67 @@ template<typename ...Args> void logger(string vars, Args&&... values) {
 
 
 
-// ** not the correct intuition and approach to the problem
+using vi = vector<int>;
+const long long INF = 1e18;
+vi order;
 
-// int rec(vll &coins, int total, int i = 0) {
-//     if (total == 0) return 1;
-//     if (i == coins.size()) return 0;
+vector<vector<pair<long long, long long>>> dp;
 
-//     int &ans = dp[total][i];
-//     if (ans != -1) return ans;
-//     ans = 0;
-//     if (total >= coins[i]) ans += rec(coins, total - coins[i], i);
-//     ans += rec(coins, total, i + 1);
-//     return ans;
-// }
 
-const int mod = 1e9 + 7;
-const int mx = 1e6;
+pair<long long, long long> rec(vi &arr, long long start, long long end) {
+    if (start + 1 >= end) return { 0, -1 };
 
-void solve() {
-    ll n, total;
-    read(n, total);
-    vector<int> coins(n); read_array(n, coins);
 
-    ll dp[total + 1] = { 0 };
-    dp[0] = 1;
-    for (int i = 1; i <= n; i++) {
-        for (int weight = 0; weight <= total; weight++) {
-            if (weight - coins[i - 1] >= 0) {  // prevent out of bounds cases
-                dp[weight] += dp[weight - coins[i - 1]];
-                dp[weight] %= mod;
-            }
+    long long curr = arr[end] - arr[start];
+
+    auto &[ans, can] = dp[start][end];
+
+    if (ans != -1) return dp[start][end];
+
+    ans = INF; can = -1;
+
+    for (long long k = start + 1; k < end; k++) {
+        long long cost_at_k = rec(arr, start, k).first + rec(arr, k, end).first;
+        if (cost_at_k + curr < ans) {
+            ans = cost_at_k + curr;
+            can = k;
         }
     }
-    int ans = dp[total];
-    cout << ans << endl;
+    return dp[start][end];
+}
+
+void build(long long i, long long j) {
+    if (i + 1 >= j) return;
+    int k = dp[i][j].second;
+    order.push_back(k);
+    build(i, k);
+    build(k, j);
+}
+
+
+
+vector<int> rodCut(int A, vector<int> &rod) {
+    order.clear();
+    rod.insert(rod.begin(), 0);
+    rod.push_back(A);
+
+    int n = rod.size();
+
+    dp.assign(n + 1, vector<pair<long long, long long>>(n + 1, { -1, -1 }));
+    int ans = rec(rod, 0, rod.size() - 1).first;
+
+    build(0, n - 1);
+    for (auto &a : order) {
+        a = rod[a];
+    }
+    return order;
+}
+
+void solve() {
+    int len, n; in(len, n);
+    vector<int> arr(n); in_arr(n, arr);
+    vector<int> ans = rodCut(len, arr);
+    out(ans);
 }
 int main() {
     int tt = 1;

@@ -1,11 +1,11 @@
 /*
-name: Coin Combinations II
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1636
+name: Fill The Grid
+group: CodeChef - Starters 48 Division 2 (Rated)
+url: https://www.codechef.com/START48B/problems/GRIDBL
 interactive: false
-memoryLimit: 512
+memoryLimit: 256
 timeLimit: 1000
-Started At: 10:26:27 AM
+Started At: 8:04:46 PM
 */
 #include <bits/stdc++.h>
 using namespace std;
@@ -56,67 +56,56 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template<typename T> void read_array(ll n, vector<T> &arr) {
+template<typename T> void in_arr(ll n, vector<T> &arr) {
     if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
-template<typename... Args> void read(Args&... args) {
+template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
 vector<string >process(string &str) {
     vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
         if (str[i] == '|') {
-            res.push_back(temp); temp = ""; i++;
+            res.push_back(temp); temp = "";
         }
         else temp.push_back(str[i]);
     } res.push_back(temp); return res;
 }
 template<typename ...Args> void logger(string vars, Args&&... values) {
-    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
+    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "|")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
         cout << delim << labels[i] << arrow << content[i]; delim = ", ";
     } cout << " ]" << endl;
 }
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
-
-// ** not the correct intuition and approach to the problem
-
-// int rec(vll &coins, int total, int i = 0) {
-//     if (total == 0) return 1;
-//     if (i == coins.size()) return 0;
-
-//     int &ans = dp[total][i];
-//     if (ans != -1) return ans;
-//     ans = 0;
-//     if (total >= coins[i]) ans += rec(coins, total - coins[i], i);
-//     ans += rec(coins, total, i + 1);
-//     return ans;
-// }
-
-const int mod = 1e9 + 7;
-const int mx = 1e6;
-
 void solve() {
-    ll n, total;
-    read(n, total);
-    vector<int> coins(n); read_array(n, coins);
+    ll n, m;
+    in(n, m);
 
-    ll dp[total + 1] = { 0 };
-    dp[0] = 1;
-    for (int i = 1; i <= n; i++) {
-        for (int weight = 0; weight <= total; weight++) {
-            if (weight - coins[i - 1] >= 0) {  // prevent out of bounds cases
-                dp[weight] += dp[weight - coins[i - 1]];
-                dp[weight] %= mod;
-            }
+    ll ans = 0;
+    if (n % 2 == 0 and m % 2 == 0) {
+        // ans = (n / 2) * (m / 2);
+    }
+
+    else {
+        // ans = (n / 2) * (m / 2);
+        ll remc = m % 2, remr = n % 2;
+        if (remc and remr) {
+            ans += n + m - 1;
+        }
+        else if (remc) {
+            ans += n;
+        }
+        else if (remr) {
+            ans += m;
         }
     }
-    int ans = dp[total];
     cout << ans << endl;
 }
 int main() {
     int tt = 1;
+    cin >> tt; // "UN - COMMENT THIS FOR TESTCASES"
     while (tt--) {
         solve();
     }

@@ -1,12 +1,3 @@
-/*
-name: Coin Combinations II
-group: CSES - CSES Problem Set
-url: https://cses.fi/problemset/task/1636
-interactive: false
-memoryLimit: 512
-timeLimit: 1000
-Started At: 10:26:27 AM
-*/
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -56,68 +47,75 @@ typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_up
 #define dbg(x)                              cout << #x << ": " << x << endl
 #define dbgg(x, y)                          cout << #x << ": " << x << "  " << #y << ": " << y << endl
 
-template<typename T> void read_array(ll n, vector<T> &arr) {
+template<typename T> void in_arr(ll n, vector<T> &arr) {
     if (arr.size() != n) arr.resize(n); for (int i = 0; i < n; i++) cin >> arr[i];
 }
-template<typename... Args> void read(Args&... args) {
+template<typename... Args> void in(Args&... args) {
     ((cin >> args), ...);
 }
 
 vector<string >process(string &str) {
     vector<string> res; string temp = ""; for (int i = 0; i < str.size(); i++) {
         if (str[i] == '|') {
-            res.push_back(temp); temp = ""; i++;
+            res.push_back(temp); temp = "";
         }
         else temp.push_back(str[i]);
     } res.push_back(temp); return res;
 }
 template<typename ...Args> void logger(string vars, Args&&... values) {
-    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "| ")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
+    string delim = ""; stringstream ss; (..., (ss << delim << values, delim = "|")); delim = ""; string arrow = " : ", str_values = ss.str(); for (auto &a : vars) if (a == ',') a = '|'; auto labels = process(vars), content = process(str_values); cout << "[ "; for (int i = 0; i < labels.size(); i++) {
         cout << delim << labels[i] << arrow << content[i]; delim = ", ";
     } cout << " ]" << endl;
 }
 #define out(...)                        logger(#__VA_ARGS__, __VA_ARGS__)
 
 
+#include <bits/stdc++.h>
+using namespace std;
 
-// ** not the correct intuition and approach to the problem
 
-// int rec(vll &coins, int total, int i = 0) {
-//     if (total == 0) return 1;
-//     if (i == coins.size()) return 0;
+int dp[101][101];
 
-//     int &ans = dp[total][i];
-//     if (ans != -1) return ans;
-//     ans = 0;
-//     if (total >= coins[i]) ans += rec(coins, total - coins[i], i);
-//     ans += rec(coins, total, i + 1);
-//     return ans;
-// }
+int rec(int arr[], int i, int j) {
+    if (i >= j - 1) return 0;
 
-const int mod = 1e9 + 7;
-const int mx = 1e6;
+    // out(i, j);
 
-void solve() {
-    ll n, total;
-    read(n, total);
-    vector<int> coins(n); read_array(n, coins);
+    int &ans = dp[i][j];
+    if (ans != -1) return ans;
 
-    ll dp[total + 1] = { 0 };
-    dp[0] = 1;
-    for (int i = 1; i <= n; i++) {
-        for (int weight = 0; weight <= total; weight++) {
-            if (weight - coins[i - 1] >= 0) {  // prevent out of bounds cases
-                dp[weight] += dp[weight - coins[i - 1]];
-                dp[weight] %= mod;
-            }
-        }
+    ans = INT_MAX;
+    for (int k = i + 1; k < j; k++) {
+        int t = rec(arr, i, k) + rec(arr, k, j);
+        ans = min(ans, arr[i] * arr[k] * arr[j] + t);
     }
-    int ans = dp[total];
-    cout << ans << endl;
+
+    return ans;
 }
-int main() {
-    int tt = 1;
-    while (tt--) {
-        solve();
+
+class Solution {
+public:
+
+    int matrixMultiplication(int N, int arr[]) {
+        memset(dp, -1, sizeof dp);
+        int ans = rec(arr, 0, N - 1);
+        return ans;
     }
+};
+
+
+int main() {
+    int t;
+    cin >> t;
+    while (t--) {
+        int N;
+        cin >> N;
+        int arr[N];
+        for (int i = 0; i < N; i++)
+            cin >> arr[i];
+
+        Solution ob;
+        cout << ob.matrixMultiplication(N, arr) << endl;
+    }
+    return 0;
 }
